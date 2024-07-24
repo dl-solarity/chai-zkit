@@ -1,9 +1,9 @@
 import chai from "chai";
 
-import "./types";
-
 import chaiAsPromised from "chai-as-promised";
-import { zkitChaiMatchers } from "./internal/zkitChaiMatchers";
+
+import "./types";
+import { zkitChai } from "./zkit-chai";
 
 chai.use(chaiAsPromised);
-chai.use(zkitChaiMatchers);
+chai.use(zkitChai);

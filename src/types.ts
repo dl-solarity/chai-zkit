@@ -1,11 +1,11 @@
-import { Inputs, InputLike } from "@solarity/zkit";
+export type NumberLike = number | bigint | `${number}`;
+export type Signal = NumberLike | Signal[];
 
 declare global {
   module Chai {
     interface Assertion {
-      inputs(inputs: Inputs): Assertion;
-
-      outputs(outputs: InputLike[]): AsyncAssertion;
+      witnessInputs(inputs: Record<string, Signal>): AsyncAssertion;
+      witnessOutputs(outputs: Record<string, Signal>): AsyncAssertion;
     }
 
     interface AsyncAssertion extends Assertion, Promise<void> {}
