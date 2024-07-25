@@ -3,7 +3,7 @@ export type Signal = NumberLike | Signal[];
 
 declare global {
   module Chai {
-    interface Assertion {
+    interface Assertion extends LanguageChains, NumericComparison, TypeComparison {
       witnessInputs(inputs: Record<string, Signal>): AsyncAssertion;
       witnessOutputs(outputs: Record<string, Signal>): AsyncAssertion;
     }
