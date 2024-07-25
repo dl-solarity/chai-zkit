@@ -1,7 +1,7 @@
 import { CircuitZKit } from "@solarity/zkit";
 
 import { Signal } from "./types";
-import { loadWitness, loadOutputs } from "./utils";
+import { loadWitness, loadOutputs, stringifySignal } from "./utils";
 
 export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   chai.Assertion.addMethod("witnessInputs", function (this: any, inputs: Record<string, Signal>) {
@@ -51,9 +51,9 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
       for (const output of Object.keys(outputs)) {
         this.assert(
-          jsonStringify(actual[output]) === jsonStringify(outputs[output]),
-          `Expected output "${output}" to be "${jsonStringify(outputs[output])}", but got "${jsonStringify(actual[output])}"`,
-          `Expected output "${output}" NOT to be "${jsonStringify(outputs[output])}", but it is"`,
+          stringifySignal(actual[output]) === stringifySignal(outputs[output]),
+          `Expected output "${output}" to be "${stringifySignal(outputs[output])}", but got "${stringifySignal(actual[output])}"`,
+          `Expected output "${output}" NOT to be "${stringifySignal(outputs[output])}", but it is"`,
         );
       }
     });
@@ -63,10 +63,4 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
     return this;
   });
-}
-
-function jsonStringify(signal: Signal): string {
-  const stringSignal = JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v));
-
-  return stringSignal.replaceAll(`"`, "");
 }

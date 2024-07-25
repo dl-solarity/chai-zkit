@@ -1,5 +1,3 @@
-// @ts-expect-error
-import { wasm as wasm_tester } from "circom_tester";
 import * as fs from "fs";
 import path from "path";
 import * as snarkjs from "snarkjs";
@@ -63,6 +61,10 @@ function loadSym(zkit: CircuitZKit): Map<string, number> {
     });
 
   return signals;
+}
+
+export function stringifySignal(signal: Signal): string {
+  return JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v)).replaceAll(`"`, "");
 }
 
 function parseOutputSignals(
