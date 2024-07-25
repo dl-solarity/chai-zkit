@@ -62,7 +62,6 @@ describe("zkitChaiMatchers", () => {
     describe("witnessInputs", () => {
       it("should not pass if not called on zkit", async () => {
         expect(() => expect(1).to.have.witnessInputs({ d, e })).to.throw(
-          Error,
           "`witnessInputs` is expected to be called on `CircuitZKit`",
         );
       });
@@ -71,7 +70,6 @@ describe("zkitChaiMatchers", () => {
     describe("witnessOutputs", () => {
       it("should not pass if not called on zkit", async () => {
         expect(() => expect(1).to.have.witnessOutputs({ d, e })).to.throw(
-          Error,
           "`witnessOutputs` is expected to be called on `CircuitZKit`",
         );
       });
