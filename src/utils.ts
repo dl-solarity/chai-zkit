@@ -1,3 +1,5 @@
+// @ts-expect-error
+import { wasm as wasm_tester } from "circom_tester";
 import * as fs from "fs";
 import path from "path";
 import * as snarkjs from "snarkjs";
@@ -26,14 +28,6 @@ export function loadOutputs(
 ): Record<string, Signal> {
   const signalToIndex = loadSym(zkit);
   const signals = Array.from(signalToIndex.keys());
-
-  function countSignalDimensions(signal: Signal): number {
-    if (!Array.isArray(signal)) {
-      return 0;
-    }
-
-    return countSignalDimensions(signal[0]) + 1;
-  }
 
   const minInputIndex = Math.min(
     ...Object.keys(inputs)
@@ -130,4 +124,12 @@ function parseOutputSignal(witness: bigint[], signals: string[], signalToIndex: 
   }
 
   return buildSignalRecursively(0);
+}
+
+function countSignalDimensions(signal: Signal): number {
+  if (!Array.isArray(signal)) {
+    return 0;
+  }
+
+  return countSignalDimensions(signal[0]) + 1;
 }

@@ -26,7 +26,6 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
   chai.Assertion.addMethod("witnessOutputs", function (this: any, outputs: Record<string, Signal>) {
     const obj = utils.flag(this, "object");
-    const negated = utils.flag(this, "negate");
 
     if (!(obj instanceof CircuitZKit)) {
       throw new Error("`witnessOutputs` is expected to be called on `CircuitZKit`");
@@ -36,26 +35,26 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
       const witness = utils.flag(this, "witness");
       const inputs = utils.flag(this, "inputs");
 
-      if (!witness || !inputs) {
-        throw new Error("`witnessInputs` is expected to be called after `witnessOutputs`");
+      if (!witness) {
+        throw new Error("`witnessOutputs` is expected to be called after `witnessInputs`");
+      }
+
+      if (Object.keys(inputs).length === 0) {
+        throw new Error("Circuit must have at least one input to extract outputs");
       }
 
       const actual = loadOutputs(obj as CircuitZKit, witness, inputs);
 
-      this.assert(
-        Object.keys(actual).length === Object.keys(outputs).length,
-        "Expected to have the same number of outputs",
-      );
+      if (Object.keys(actual).length !== Object.keys(outputs).length) {
+        throw new Error(`Expected ${Object.keys(outputs).length} outputs, but got ${Object.keys(actual).length}`);
+      }
 
       for (const output of Object.keys(outputs)) {
         this.assert(
-          deepCompareSignals(actual[output], outputs[output]),
-          `Expected output ${output} to be ${outputs[output]}, but got ${actual[output]})}`,
+          jsonStringify(actual[output]) === jsonStringify(outputs[output]),
+          `Expected output "${output}" to be "${jsonStringify(outputs[output])}", but got "${jsonStringify(actual[output])}"`,
+          `Expected output "${output}" NOT to be "${jsonStringify(outputs[output])}", but it is"`,
         );
-      }
-
-      if (negated) {
-        this.assert(false, "Expected outputs to not match");
       }
     });
 
@@ -66,22 +65,8 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   });
 }
 
-function deepCompareSignals(lhs: Signal, rhs: Signal): boolean {
-  if (Array.isArray(lhs) !== Array.isArray(rhs)) {
-    return false;
-  }
+function jsonStringify(signal: Signal): string {
+  const stringSignal = JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v));
 
-  if (Array.isArray(lhs) && Array.isArray(rhs)) {
-    if (lhs.length !== rhs.length) {
-      return false;
-    }
-
-    for (let i = 0; i < lhs.length; i++) {
-      if (!deepCompareSignals(lhs[i], rhs[i])) {
-        return false;
-      }
-    }
-  }
-
-  return lhs.toString() === rhs.toString();
+  return stringSignal.replaceAll(`"`, "");
 }
