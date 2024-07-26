@@ -9,7 +9,8 @@ type ExtractPublicSignals<T> = T extends { verifyProof(proof: { publicSignals: i
   : never;
 
 type Circuit = {
-  createVerifier(): Promise<void>;
+  generateProof(inputs: any): Promise<any>;
+  verifyProof(proof: any): Promise<boolean>;
 };
 
 declare global {
