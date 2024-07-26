@@ -1,0 +1,10 @@
+{
+  "name": "complex-circuits",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "npm run zkit-compile && npm run zkit-verifiers && npm run solidity-compile",
+    "solidity-compile": "npx hardhat compile --force",
+    "zkit-compile": "npx hardhat zkit:compile",
+    "zkit-verifiers": "npx hardhat zkit:verifiers"
+  }
+}

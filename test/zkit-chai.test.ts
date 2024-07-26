@@ -1,61 +1,61 @@
 import { expect } from "chai";
 import path from "path";
-import { CircuitZKit } from "@solarity/zkit";
 
 import { useFixtureProject } from "./helpers";
 
 import "../src";
-import { Signal } from "../src/types";
+
+import { Matrix } from "./fixture-projects/complex-circuits/generated-types/zkit";
 
 describe("zkitChaiMatchers", () => {
   function getArtifactsFullPath(circuitDirSourceName: string): string {
-    return path.join(process.cwd(), "zkit", "artifacts", circuitDirSourceName);
+    return path.join(process.cwd(), "zkit", "artifacts", "circuits", circuitDirSourceName);
   }
 
   function getVerifiersDirFullPath(): string {
     return path.join(process.cwd(), "contracts", "verifiers");
   }
 
-  let matrix: CircuitZKit;
+  let matrix: Matrix;
 
-  useFixtureProject("simple-circuits");
+  useFixtureProject("complex-circuits");
 
   beforeEach(() => {
     const circuitName = "Matrix";
     const circuitArtifactsPath = getArtifactsFullPath(`${circuitName}.circom`);
     const verifierDirPath = getVerifiersDirFullPath();
 
-    matrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath });
+    matrix = new Matrix({ circuitName, circuitArtifactsPath, verifierDirPath });
   });
 
   describe("witness", () => {
-    let a: Signal;
-    let b: Signal;
-    let c: Signal;
-    let d: Signal;
-    let e: Signal;
+    let a: string[][];
+    let b: string[][];
+    let c: string;
+    let d: string[][];
+    let e: string[][];
 
     beforeEach(() => {
       a = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
+        ["1", "2", "3"],
+        ["4", "5", "6"],
+        ["7", "8", "9"],
       ];
       b = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
+        ["1", "2", "3"],
+        ["4", "5", "6"],
+        ["7", "8", "9"],
       ];
-      c = 1;
+      c = "1";
       d = [
-        [2, 5, 0],
-        [17, 26, 0],
-        [0, 0, 0],
+        ["2", "5", "0"],
+        ["17", "26", "0"],
+        ["0", "0", "0"],
       ];
       e = [
-        [1, 4, 0],
-        [16, 25, 0],
-        [0, 0, 0],
+        ["1", "4", "0"],
+        ["16", "25", "0"],
+        ["0", "0", "0"],
       ];
     });
 
@@ -91,9 +91,11 @@ describe("zkitChaiMatchers", () => {
       });
 
       it("should not pass if not the same amount of outputs", async () => {
-        await expect(expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ d })).to.be.rejectedWith(
-          "Expected 1 outputs, but got 2",
-        );
+        await expect(
+          expect(matrix)
+            .with.witnessInputs({ a, b, c })
+            .to.have.witnessOutputs({ d } as unknown as any),
+        ).to.be.rejectedWith("Expected 1 outputs, but got 2");
       });
 
       it("should not pass if negated but outputs are correct", async () => {

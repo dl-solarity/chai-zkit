@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 
 import "@nomicfoundation/hardhat-ethers";
+import "@solarity/hardhat-zkit";
 
 const config: HardhatUserConfig = {
   networks: {
