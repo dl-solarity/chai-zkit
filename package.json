@@ -1,6 +1,6 @@
 {
   "name": "@solarity/zkit-chai-matchers",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "author": "Distributed Lab",
   "readme": "README.md",
@@ -37,15 +37,16 @@
       "text"
     ]
   },
+  "peerDependencies": {
+    "chai": "^4.4.1",
+    "@solarity/hardhat-zkit": "^0.3.0"
+  },
   "dependencies": {
     "@solarity/zkit": "0.2.4",
-    "chai": "4.4.1",
-    "chai-as-promised": "7.1.1",
-    "snarkjs": "0.7.4"
+    "chai-as-promised": "7.1.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.5",
-    "@solarity/hardhat-zkit": "^0.3.0-rc.1",
     "@types/chai": "^4.3.16",
     "@types/chai-as-promised": "^7.1.8",
     "@types/mocha": "^10.0.6",
