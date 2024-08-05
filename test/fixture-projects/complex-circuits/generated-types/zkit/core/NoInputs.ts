@@ -37,6 +37,10 @@ export class NoInputs extends CircuitZKit {
     };
   }
 
+  public async calculateWitness(inputs: PrivateNoInputs): Promise<bigint[]> {
+    return await super.calculateWitness(inputs as any);
+  }
+
   public async verifyProof(proof: ProofNoInputs): Promise<boolean> {
     return await super.verifyProof({
       proof: proof.proof,

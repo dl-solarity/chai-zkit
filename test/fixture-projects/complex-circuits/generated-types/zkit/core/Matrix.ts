@@ -44,6 +44,10 @@ export class Matrix extends CircuitZKit {
     };
   }
 
+  public async calculateWitness(inputs: PrivateMatrix): Promise<bigint[]> {
+    return await super.calculateWitness(inputs as any);
+  }
+
   public async verifyProof(proof: ProofMatrix): Promise<boolean> {
     return await super.verifyProof({
       proof: proof.proof,
