@@ -1,29 +1,8 @@
 import * as fs from "fs";
-import path from "path";
-import * as snarkjs from "snarkjs";
 
-import { CircuitZKit } from "@solarity/zkit";
+import { CircuitZKit, Signal, Signals } from "@solarity/zkit";
 
-import { Signal } from "./types";
-
-export async function loadWitness(zkit: CircuitZKit, inputs: Record<string, Signal>): Promise<bigint[]> {
-  const wasmFile = zkit.mustGetArtifactsFilePath("wasm");
-  const wtnsFile = path.join(wasmFile, "..", `${zkit.getCircuitName()}.wtns`);
-
-  await snarkjs.wtns.calculate(inputs, wasmFile, wtnsFile);
-
-  const witness = (await snarkjs.wtns.exportJson(wtnsFile)) as bigint[];
-
-  fs.rmSync(wtnsFile);
-
-  return witness;
-}
-
-export function loadOutputs(
-  zkit: CircuitZKit,
-  witness: bigint[],
-  inputs: Record<string, Signal>,
-): Record<string, Signal> {
+export function loadOutputs(zkit: CircuitZKit, witness: bigint[], inputs: Signals): Signals {
   const signalToIndex = loadSym(zkit);
   const signals = Array.from(signalToIndex.keys());
 
@@ -67,12 +46,8 @@ export function stringifySignal(signal: Signal): string {
   return JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v)).replaceAll(`"`, "");
 }
 
-function parseOutputSignals(
-  witness: bigint[],
-  signals: string[],
-  signalToIndex: Map<string, number>,
-): Record<string, Signal> {
-  let outputSignals: Record<string, Signal> = {};
+function parseOutputSignals(witness: bigint[], signals: string[], signalToIndex: Map<string, number>): Signals {
+  let outputSignals: Signals = {};
 
   for (let l = 0; l < signals.length; l++) {
     const currentOutput = signals[l].split(".")[1].split("[")[0];
@@ -96,7 +71,7 @@ function parseOutputSignals(
 }
 
 function parseOutputSignal(witness: bigint[], signals: string[], signalToIndex: Map<string, number>): Signal {
-  if (signals[0].length === 1 && signals[0].indexOf("[") === -1) {
+  if (signals.length === 1 && signals[0].indexOf("[") === -1) {
     return witness[signalToIndex.get(signals[0])!];
   }
 
@@ -108,7 +83,7 @@ function parseOutputSignal(witness: bigint[], signals: string[], signalToIndex: 
   let it = 0;
 
   function buildSignalRecursively(dimension: number): Signal {
-    let signal: Signal = [];
+    let signal = [];
 
     if (dimension === dimensions.length - 1) {
       for (let i = 0; i <= dimensions[dimension]; i++) {
@@ -122,7 +97,7 @@ function parseOutputSignal(witness: bigint[], signals: string[], signalToIndex: 
       signal.push(buildSignalRecursively(dimension + 1));
     }
 
-    return signal;
+    return signal as Signal;
   }
 
   return buildSignalRecursively(0);

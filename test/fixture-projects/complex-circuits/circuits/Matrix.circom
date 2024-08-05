@@ -10,6 +10,7 @@ template Matrix () {
 
     signal output d[3][3];
     signal output e[3][3];
+    signal output f;
 
     for (var i = 0; i < 2; i++) {
         for (var j = 0; j < 2; j++) {
@@ -17,6 +18,8 @@ template Matrix () {
             e[i][j] <== a[i][j] * b[i][j];
         }
     }
+
+    f <== c;
 }
 
 component main { public [a] } = Matrix();
