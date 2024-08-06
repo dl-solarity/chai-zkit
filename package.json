@@ -1,13 +1,13 @@
 {
-  "name": "@solarity/zkit-chai-matchers",
+  "name": "@solarity/chai-zkit",
   "version": "0.1.0",
   "license": "MIT",
   "author": "Distributed Lab",
   "readme": "README.md",
-  "description": "Chai matchers for Circom",
+  "description": "ZKit chai matchers for Circom",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dl-solarity/zkit-chai-matchers.git"
+    "url": "git+https://github.com/dl-solarity/chai-zkit.git"
   },
   "files": [
     "dist",
@@ -37,13 +37,13 @@
       "text"
     ]
   },
-  "peerDependencies": {
-    "chai": "^4.0.0",
-    "@solarity/hardhat-zkit": "^0.3.1"
-  },
   "dependencies": {
     "@solarity/zkit": "0.2.4",
     "chai-as-promised": "7.1.1"
+  },
+  "peerDependencies": {
+    "chai": "^4.0.0",
+    "@solarity/hardhat-zkit": "^0.3.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.5",

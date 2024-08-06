@@ -1,4 +1,5 @@
 /cache
 /artifacts
+/zkit
 
 contracts/verifiers

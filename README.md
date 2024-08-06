@@ -1,1 +1,1 @@
-# zkit-chai-matchers
+# Chai-zkit

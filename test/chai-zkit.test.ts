@@ -11,7 +11,7 @@ import "../src";
 
 import { Matrix, NoInputs } from "./fixture-projects/complex-circuits/generated-types/zkit";
 
-describe("zkitChaiMatchers", () => {
+describe("chai-zkit", () => {
   function getArtifactsFullPath(circuitDirSourceName: string): string {
     return path.join(process.cwd(), "zkit", "artifacts", "circuits", circuitDirSourceName);
   }
