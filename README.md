@@ -32,7 +32,7 @@ import "@solarity/chai-zkit";
 ## Usage
 
 > [!IMPORTANT]
-> The package is meant to be used together with [hardhat-zkit](https://github.com/dl-solarity/hardhat-zkit) plugin that provides circuits objects used in chai assertions.
+> The package is meant to be used together with [hardhat-zkit](https://github.com/dl-solarity/hardhat-zkit) plugin that provides circuits objects to be tested with chai assertions.
 
 After installing the package, you may use the following assertions:
 
@@ -59,4 +59,3 @@ await expect(
 ## Known limitations
 
 - Temporarily, only the witness `input <> output` signals testing is supported.
-
