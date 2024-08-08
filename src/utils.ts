@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-import { CircuitZKit, Signal, Signals } from "@solarity/zkit";
+import { CircuitZKit, NumberLike, Signal, Signals } from "@solarity/zkit";
 
 export function loadOutputs(zkit: CircuitZKit, witness: bigint[], inputs: Signals): Signals {
   const signalToIndex = loadSym(zkit);
@@ -24,6 +24,37 @@ export function loadOutputs(zkit: CircuitZKit, witness: bigint[], inputs: Signal
   return parseOutputSignals(witness, signals.slice(0, minInputIndex), signalToIndex);
 }
 
+export function flattenSignals(signals: Signals): NumberLike[] {
+  let flattenSignalsArr: NumberLike[] = [];
+
+  for (const output of Object.keys(signals)) {
+    flattenSignalsArr.push(...flattenSignal(signals[output]));
+  }
+
+  return flattenSignalsArr;
+}
+
+export function compareSignals(actualSignal: Signal, expectedSignal: Signal): boolean {
+  const actualSignalValues: NumberLike[] = flattenSignal(actualSignal);
+  const expectedSignalValues: NumberLike[] = flattenSignal(expectedSignal);
+
+  if (actualSignalValues.length !== expectedSignalValues.length) {
+    return false;
+  }
+
+  for (let i = 0; i < actualSignalValues.length; i++) {
+    if (BigInt(actualSignalValues[i]) !== BigInt(expectedSignalValues[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function stringifySignal(signal: Signal): string {
+  return JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v)).replaceAll(`"`, "");
+}
+
 function loadSym(zkit: CircuitZKit): Map<string, number> {
   const symFile = zkit.mustGetArtifactsFilePath("sym");
   const signals = new Map<string, number>();
@@ -40,10 +71,6 @@ function loadSym(zkit: CircuitZKit): Map<string, number> {
     });
 
   return signals;
-}
-
-export function stringifySignal(signal: Signal): string {
-  return JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v)).replaceAll(`"`, "");
 }
 
 function parseOutputSignals(witness: bigint[], signals: string[], signalToIndex: Map<string, number>): Signals {
@@ -109,4 +136,10 @@ function countSignalDimensions(signal: Signal): number {
   }
 
   return countSignalDimensions(signal[0]) + 1;
+}
+
+function flattenSignal(signal: Signal): NumberLike[] {
+  const flatValue = Array.isArray(signal) ? signal.flatMap((signal) => flattenSignal(signal)) : signal;
+
+  return Array.isArray(flatValue) ? flatValue : [flatValue];
 }

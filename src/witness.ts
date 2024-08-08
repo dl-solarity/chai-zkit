@@ -1,6 +1,6 @@
-import { CircuitZKit, Signals } from "@solarity/zkit";
+import { CircuitZKit, NumberLike, Signals } from "@solarity/zkit";
 
-import { loadOutputs, stringifySignal } from "./utils";
+import { compareSignals, flattenSignals, loadOutputs, stringifySignal } from "./utils";
 
 export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   chai.Assertion.addMethod("witnessInputs", function (this: any, inputs: Signals) {
@@ -23,7 +23,7 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
     return this;
   });
 
-  chai.Assertion.addMethod("witnessOutputsStrict", function (this: any, outputs: Signals) {
+  chai.Assertion.addMethod("witnessOutputsStrict", function (this: any, outputs: Signals | NumberLike[]) {
     const obj = utils.flag(this, "object");
 
     if (!(obj instanceof CircuitZKit)) {
@@ -44,17 +44,7 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
       const actual = loadOutputs(obj as CircuitZKit, witness, inputs);
 
-      if (Object.keys(actual).length !== Object.keys(outputs).length) {
-        throw new Error(`Expected ${Object.keys(outputs).length} outputs, but got ${Object.keys(actual).length}`);
-      }
-
-      for (const output of Object.keys(outputs)) {
-        this.assert(
-          stringifySignal(actual[output]) === stringifySignal(outputs[output]),
-          `Expected output "${output}" to be "${stringifySignal(outputs[output])}", but got "${stringifySignal(actual[output])}"`,
-          `Expected output "${output}" NOT to be "${stringifySignal(outputs[output])}", but it is"`,
-        );
-      }
+      witnessOutputsCompare(this, actual, outputs, true);
     });
 
     this.then = promise.then.bind(promise);
@@ -63,7 +53,7 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
     return this;
   });
 
-  chai.Assertion.addMethod("witnessOutputs", function (this: any, outputs: Signals) {
+  chai.Assertion.addMethod("witnessOutputs", function (this: any, outputs: Signals | NumberLike[]) {
     const obj = utils.flag(this, "object");
 
     if (!(obj instanceof CircuitZKit)) {
@@ -84,13 +74,7 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
       const actual = loadOutputs(obj as CircuitZKit, witness, inputs);
 
-      for (const output of Object.keys(outputs)) {
-        this.assert(
-          stringifySignal(actual[output]) === stringifySignal(outputs[output]),
-          `Expected output "${output}" to be "${stringifySignal(outputs[output])}", but got "${stringifySignal(actual[output])}"`,
-          `Expected output "${output}" NOT to be "${stringifySignal(outputs[output])}", but it is"`,
-        );
-      }
+      witnessOutputsCompare(this, actual, outputs);
     });
 
     this.then = promise.then.bind(promise);
@@ -98,4 +82,41 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
 
     return this;
   });
+}
+
+function witnessOutputsCompare(
+  instance: any,
+  actualOutputs: Signals,
+  expectedOutputs: Signals | NumberLike[],
+  isStrict: boolean = false,
+) {
+  if (Array.isArray(expectedOutputs)) {
+    const actualOutputsArr: NumberLike[] = flattenSignals(actualOutputs);
+
+    if (isStrict && actualOutputsArr.length !== expectedOutputs.length) {
+      throw new Error(`Expected ${actualOutputsArr.length} outputs, but got ${expectedOutputs.length}`);
+    }
+
+    expectedOutputs.forEach((output: NumberLike, index: number) => {
+      instance.assert(
+        BigInt(output) === BigInt(actualOutputsArr[index]),
+        `Expected output with index "${index}" to be "${output}", but got "${actualOutputsArr[index]}"`,
+        `Expected output "${output}" NOT to be "${output}", but it is"`,
+      );
+    });
+  } else {
+    if (isStrict && Object.keys(actualOutputs).length !== Object.keys(expectedOutputs).length) {
+      throw new Error(
+        `Expected ${Object.keys(expectedOutputs).length} outputs, but got ${Object.keys(actualOutputs).length}`,
+      );
+    }
+
+    for (const output of Object.keys(expectedOutputs)) {
+      instance.assert(
+        compareSignals(actualOutputs[output], expectedOutputs[output]),
+        `Expected output "${output}" to be "${stringifySignal(expectedOutputs[output])}", but got "${stringifySignal(actualOutputs[output])}"`,
+        `Expected output "${output}" NOT to be "${stringifySignal(expectedOutputs[output])}", but it is"`,
+      );
+    }
+  }
 }

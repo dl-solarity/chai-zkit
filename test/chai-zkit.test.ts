@@ -3,7 +3,7 @@ import { expect } from "chai";
 import * as fs from "fs";
 import path from "path";
 
-import { NumberLike } from "@solarity/zkit";
+import { NumberLike, CircuitZKit } from "@solarity/zkit";
 
 import { useFixtureProject } from "./helpers";
 
@@ -20,6 +20,7 @@ describe("chai-zkit", () => {
     return path.join(process.cwd(), "contracts", "verifiers");
   }
 
+  let baseMatrix: CircuitZKit;
   let matrix: Matrix;
 
   useFixtureProject("complex-circuits");
@@ -29,6 +30,7 @@ describe("chai-zkit", () => {
     const circuitArtifactsPath = getArtifactsFullPath(`${circuitName}.circom`);
     const verifierDirPath = getVerifiersDirFullPath();
 
+    baseMatrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath });
     matrix = new Matrix({ circuitName, circuitArtifactsPath, verifierDirPath });
   });
 
@@ -77,7 +79,15 @@ describe("chai-zkit", () => {
         await expect(matrix)
           .with.witnessInputs({ a, b, c: "1337" })
           .with.witnessInputs({ a, b, c })
-          .to.have.witnessOutputsStrict({ d, e, f });
+          .to.have.witnessOutputs({
+            d,
+            e: [
+              ["1", "4", "0"],
+              ["16", "25", "0"],
+              ["0", "0", "0"],
+            ],
+            f: "0x1",
+          });
       });
     });
 
@@ -135,6 +145,32 @@ describe("chai-zkit", () => {
 
       it("should pass if outputs are correct for given inputs", async () => {
         await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputsStrict({ d, e, f });
+      });
+
+      it("should pass for base CircuitZKit object", async () => {
+        await expect(baseMatrix)
+          .with.witnessInputs({ a, b, c })
+          .to.have.witnessOutputsStrict([
+            "2",
+            "0x5",
+            "0",
+            "17",
+            "26",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "4",
+            "0",
+            "16",
+            "25",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+          ]);
       });
     });
 
@@ -198,6 +234,32 @@ describe("chai-zkit", () => {
 
       it("should pass if outputs are correct for given inputs and not all outputs passed", async () => {
         await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ d });
+      });
+
+      it("should pass for base CircuitZKit object", async () => {
+        await expect(baseMatrix)
+          .with.witnessInputs({ a, b, c })
+          .to.have.witnessOutputs([
+            "2",
+            "0x5",
+            "0",
+            "17",
+            "26",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "4",
+            "0",
+            "16",
+            "25",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+          ]);
       });
     });
   });
