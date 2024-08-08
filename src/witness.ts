@@ -72,7 +72,10 @@ function witnessOutputsCompare(
   if (Array.isArray(expectedOutputs)) {
     const actualOutputsArr: NumberLike[] = flattenSignals(actualOutputs);
 
-    if (isStrict && actualOutputsArr.length !== expectedOutputs.length) {
+    if (
+      (isStrict && actualOutputsArr.length !== expectedOutputs.length) ||
+      actualOutputsArr.length < expectedOutputs.length
+    ) {
       throw new Error(`Expected ${actualOutputsArr.length} outputs, but got ${expectedOutputs.length}`);
     }
 

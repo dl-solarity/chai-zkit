@@ -160,11 +160,40 @@ describe("chai-zkit", () => {
       });
 
       it("should not pass if not the same amount of outputs and strict and base CircuitZKit object", async () => {
-        const wrotngOutputs: string[] = ["2", "0x5", "0", "17", "26", "0"];
+        const wrongOutputs: string[] = ["2", "0x5", "0", "17", "26", "0"];
 
         await expect(
-          expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.strict.witnessOutputs(wrotngOutputs),
-        ).to.be.rejectedWith(`Expected 19 outputs, but got ${wrotngOutputs.length}`);
+          expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.strict.witnessOutputs(wrongOutputs),
+        ).to.be.rejectedWith(`Expected 19 outputs, but got ${wrongOutputs.length}`);
+      });
+
+      it("should not pass for base CircuitZKit object and expected outputs length bigger than actual", async () => {
+        const wrongOutputs: string[] = [
+          "2",
+          "0x5",
+          "0",
+          "17",
+          "26",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "4",
+          "0",
+          "16",
+          "25",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "1",
+        ];
+
+        await expect(
+          expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs(wrongOutputs),
+        ).to.be.rejectedWith(`Expected 19 outputs, but got ${wrongOutputs.length}`);
       });
 
       it("should pass if not the same amount of outputs and not strict", async () => {
