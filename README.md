@@ -39,11 +39,11 @@ After installing the package, you may use the following assertions:
 ```ts
 const matrix = await zkit.getCircuit("Matrix");
 
-// strict assertion, all the outputs must be present
-await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputsStrict({ d, e, f });
-
 // partial output assertion
 await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ d });
+
+// strict assertion, all the outputs must be present
+await expect(matrix).with.witnessInputs({ a, b, c }).to.have.strict.witnessOutputs({ d, e, f });
 
 // provided output `e` doesn't match the obtained one
 await expect(expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ e })).to.be.rejectedWith(
@@ -58,4 +58,5 @@ await expect(
 
 ## Known limitations
 
+- Do not use `not` chai negation prior `witnessInputs` call, this will break the typization.
 - Temporarily, only the witness `input <> output` signals testing is supported.
