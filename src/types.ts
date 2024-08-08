@@ -21,7 +21,30 @@ declare global {
       <T>(val: T, message?: string): Assertion<T>;
     }
 
+    interface AsyncAssertion<T = any> extends Promise<void> {
+      not: AsyncAssertion<T>;
+      to: AsyncAssertion<T>;
+      be: AsyncAssertion<T>;
+      been: AsyncAssertion<T>;
+      is: AsyncAssertion<T>;
+      that: AsyncAssertion<T>;
+      which: AsyncAssertion<T>;
+      and: AsyncAssertion<T>;
+      has: AsyncAssertion<T>;
+      have: AsyncAssertion<T>;
+      with: AsyncAssertion<T>;
+      at: AsyncAssertion<T>;
+      of: AsyncAssertion<T>;
+      same: AsyncAssertion<T>;
+      but: AsyncAssertion<T>;
+      does: AsyncAssertion<T>;
+      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      witnessOutputsStrict(outputs: T extends Circuit ? ExtractOutputs<T> : never): AsyncAssertion<T>;
+      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+    }
+
     interface Assertion<T = any> {
+      // not: Assertion<T>;
       to: Assertion<T>;
       be: Assertion<T>;
       been: Assertion<T>;
@@ -37,12 +60,9 @@ declare global {
       same: Assertion<T>;
       but: Assertion<T>;
       does: Assertion<T>;
-
       witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
       witnessOutputsStrict(outputs: T extends Circuit ? ExtractOutputs<T> : never): AsyncAssertion<T>;
       witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
     }
-
-    interface AsyncAssertion<T = any> extends Assertion<T>, Promise<void> {}
   }
 }
