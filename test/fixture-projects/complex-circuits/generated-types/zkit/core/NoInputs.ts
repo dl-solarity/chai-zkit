@@ -5,10 +5,12 @@
 
 import { CircuitZKit, CircuitZKitConfig, Groth16Proof, NumberLike, NumericString, PublicSignals } from "@solarity/zkit";
 
+import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
+
 export type PrivateNoInputs = {};
 
 export type PublicNoInputs = {
-  c: NumericString;
+  c: NumberLike;
 };
 
 export type ProofNoInputs = {
@@ -38,18 +40,18 @@ export class NoInputs extends CircuitZKit {
   }
 
   public async calculateWitness(inputs: PrivateNoInputs): Promise<bigint[]> {
-    return await super.calculateWitness(inputs as any);
+    return super.calculateWitness(inputs as any);
   }
 
   public async verifyProof(proof: ProofNoInputs): Promise<boolean> {
-    return await super.verifyProof({
+    return super.verifyProof({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
   }
 
   public async generateCalldata(proof: ProofNoInputs): Promise<Calldata> {
-    return await super.generateCalldata({
+    return super.generateCalldata({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
@@ -59,19 +61,21 @@ export class NoInputs extends CircuitZKit {
     return ["c"];
   }
 
-  private _normalizePublicSignals(publicSignals: PublicSignals): PublicNoInputs {
-    const signalNames = this.getSignalNames();
+  public getSignalDimensions(name: string): number[] {
+    switch (name) {
+      case "c":
+        return [];
+      default:
+        throw new Error(`Unknown signal name: ${name}`);
+    }
+  }
 
-    return signalNames.reduce((acc: any, signalName, index) => {
-      acc[signalName] = publicSignals[index];
-      return acc;
-    }, {});
+  private _normalizePublicSignals(publicSignals: PublicSignals): PublicNoInputs {
+    return normalizePublicSignals(publicSignals, this.getSignalNames(), this.getSignalDimensions);
   }
 
   private _denormalizePublicSignals(publicSignals: PublicNoInputs): PublicSignals {
-    const signalNames = this.getSignalNames();
-
-    return signalNames.map((signalName) => (publicSignals as any)[signalName]);
+    return denormalizePublicSignals(publicSignals, this.getSignalNames());
   }
 }
 
