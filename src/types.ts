@@ -4,6 +4,7 @@ export type ExtractOutputs<T> = Omit<ExtractPublicSignals<T>, keyof ExtractInput
 type ExtractPublicSignals<T> = T extends { verifyProof(proof: { publicSignals: infer P }): Promise<boolean> }
   ? P
   : never;
+type ExtractProofType<T> = T extends { verifyProof(proof: infer P): Promise<boolean> } ? P : never;
 
 type Circuit = {
   generateProof(inputs: any): Promise<any>;
@@ -20,7 +21,18 @@ declare global {
       <T>(val: T, message?: string): Assertion<T>;
     }
 
-    interface AsyncAssertion<T = any> extends Promise<void> {
+    interface Witness<T = any> {
+      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+    }
+
+    interface Proof<T = any> {
+      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      publicSignals(pubSignals: T extends Circuit ? Partial<ExtractPublicSignals<T>> : never): AsyncAssertion<T>;
+      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+    }
+
+    interface AsyncAssertion<T = any> extends Promise<void>, Witness<T>, Proof<T> {
       not: AsyncAssertion<T>;
       strict: AsyncAssertion<T>;
       to: AsyncAssertion<T>;
@@ -38,11 +50,9 @@ declare global {
       same: AsyncAssertion<T>;
       but: AsyncAssertion<T>;
       does: AsyncAssertion<T>;
-      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
     }
 
-    interface Assertion<T = any> {
+    interface Assertion<T = any> extends Witness<T>, Proof<T> {
       to: Assertion<T>;
       be: Assertion<T>;
       been: Assertion<T>;
@@ -58,8 +68,6 @@ declare global {
       same: Assertion<T>;
       but: Assertion<T>;
       does: Assertion<T>;
-      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
     }
   }
 }

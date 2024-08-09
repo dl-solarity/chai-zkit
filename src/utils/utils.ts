@@ -34,21 +34,10 @@ export function flattenSignals(signals: Signals): NumberLike[] {
   return flattenSignalsArr;
 }
 
-export function compareSignals(actualSignal: Signal, expectedSignal: Signal): boolean {
-  const actualSignalValues: NumberLike[] = flattenSignal(actualSignal);
-  const expectedSignalValues: NumberLike[] = flattenSignal(expectedSignal);
+export function flattenSignal(signal: Signal): NumberLike[] {
+  const flatValue = Array.isArray(signal) ? signal.flatMap((signal) => flattenSignal(signal)) : signal;
 
-  if (actualSignalValues.length !== expectedSignalValues.length) {
-    return false;
-  }
-
-  for (let i = 0; i < actualSignalValues.length; i++) {
-    if (BigInt(actualSignalValues[i]) !== BigInt(expectedSignalValues[i])) {
-      return false;
-    }
-  }
-
-  return true;
+  return Array.isArray(flatValue) ? flatValue : [flatValue];
 }
 
 export function stringifySignal(signal: Signal): string {
@@ -136,10 +125,4 @@ function countSignalDimensions(signal: Signal): number {
   }
 
   return countSignalDimensions(signal[0]) + 1;
-}
-
-function flattenSignal(signal: Signal): NumberLike[] {
-  const flatValue = Array.isArray(signal) ? signal.flatMap((signal) => flattenSignal(signal)) : signal;
-
-  return Array.isArray(flatValue) ? flatValue : [flatValue];
 }

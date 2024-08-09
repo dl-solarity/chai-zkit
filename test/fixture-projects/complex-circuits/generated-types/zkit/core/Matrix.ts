@@ -5,6 +5,8 @@
 
 import { CircuitZKit, CircuitZKitConfig, Groth16Proof, NumberLike, NumericString, PublicSignals } from "@solarity/zkit";
 
+import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
+
 export type PrivateMatrix = {
   a: NumberLike[][];
   b: NumberLike[][];
@@ -12,10 +14,10 @@ export type PrivateMatrix = {
 };
 
 export type PublicMatrix = {
-  d: NumericString[][];
-  e: NumericString[][];
-  f: NumericString;
-  a: NumericString[][];
+  d: NumberLike[][];
+  e: NumberLike[][];
+  f: NumberLike;
+  a: NumberLike[][];
 };
 
 export type ProofMatrix = {
@@ -27,7 +29,36 @@ export type Calldata = [
   [NumericString, NumericString],
   [[NumericString, NumericString], [NumericString, NumericString]],
   [NumericString, NumericString],
-  [NumericString, NumericString, NumericString, NumericString],
+  [
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+  ],
 ];
 
 export class Matrix extends CircuitZKit {
@@ -45,18 +76,18 @@ export class Matrix extends CircuitZKit {
   }
 
   public async calculateWitness(inputs: PrivateMatrix): Promise<bigint[]> {
-    return await super.calculateWitness(inputs as any);
+    return super.calculateWitness(inputs as any);
   }
 
   public async verifyProof(proof: ProofMatrix): Promise<boolean> {
-    return await super.verifyProof({
+    return super.verifyProof({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
   }
 
   public async generateCalldata(proof: ProofMatrix): Promise<Calldata> {
-    return await super.generateCalldata({
+    return super.generateCalldata({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
@@ -66,19 +97,27 @@ export class Matrix extends CircuitZKit {
     return ["d", "e", "f", "a"];
   }
 
-  private _normalizePublicSignals(publicSignals: PublicSignals): PublicMatrix {
-    const signalNames = this.getSignalNames();
+  public getSignalDimensions(name: string): number[] {
+    switch (name) {
+      case "d":
+        return [3, 3];
+      case "e":
+        return [3, 3];
+      case "f":
+        return [];
+      case "a":
+        return [3, 3];
+      default:
+        throw new Error(`Unknown signal name: ${name}`);
+    }
+  }
 
-    return signalNames.reduce((acc: any, signalName, index) => {
-      acc[signalName] = publicSignals[index];
-      return acc;
-    }, {});
+  private _normalizePublicSignals(publicSignals: PublicSignals): PublicMatrix {
+    return normalizePublicSignals(publicSignals, this.getSignalNames(), this.getSignalDimensions);
   }
 
   private _denormalizePublicSignals(publicSignals: PublicMatrix): PublicSignals {
-    const signalNames = this.getSignalNames();
-
-    return signalNames.map((signalName) => (publicSignals as any)[signalName]);
+    return denormalizePublicSignals(publicSignals, this.getSignalNames());
   }
 }
 

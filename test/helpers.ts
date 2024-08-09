@@ -10,7 +10,7 @@ export function useFixtureProject(fixtureProjectName: string, networkName = "har
     this.hre = require("hardhat");
 
     await this.hre.run("compile", { quiet: true });
-    await this.hre.run("zkit:compile", { quiet: true, sym: true });
+    await this.hre.run("zkit:compile", { quiet: true });
     await this.hre.run("zkit:verifiers", { quiet: true });
   });
 
