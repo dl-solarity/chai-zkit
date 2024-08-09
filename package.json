@@ -42,7 +42,7 @@
     "chai-as-promised": "7.1.1"
   },
   "peerDependencies": {
-    "@solarity/hardhat-zkit": "^0.3.0",
+    "@solarity/hardhat-zkit": "^0.3.1",
     "chai": "^4.0.0"
   },
   "devDependencies": {
