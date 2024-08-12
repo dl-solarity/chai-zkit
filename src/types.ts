@@ -28,8 +28,8 @@ declare global {
 
     interface Proof<T = any> {
       generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      publicSignals(pubSignals: T extends Circuit ? Partial<ExtractPublicSignals<T>> : never): AsyncAssertion<T>;
       verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+      useSolidityVerifer(verifierContract: any): AsyncAssertion<T>;
     }
 
     interface AsyncAssertion<T = any> extends Promise<void>, Witness<T>, Proof<T> {

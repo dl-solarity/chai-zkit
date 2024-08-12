@@ -1,4 +1,4 @@
-import { NumberLike, Signals, Signal } from "@solarity/zkit";
+import { NumberLike, Signals, Signal, CircuitZKit } from "@solarity/zkit";
 
 import { flattenSignals, flattenSignal, stringifySignal } from "./utils";
 
@@ -39,6 +39,12 @@ export function outputSignalsCompare(
         `Expected output signal "${output}" NOT to be "${stringifySignal(expectedOutputSignals[output])}", but it is"`,
       );
     }
+  }
+}
+
+export function checkCircuitZKit(circuitZKit: any, methodName: string) {
+  if (!(circuitZKit instanceof CircuitZKit)) {
+    throw new Error(`'${methodName}' is expected to be called on 'CircuitZKit'`);
   }
 }
 

@@ -1,20 +1,19 @@
 import { CircuitZKit, NumberLike, Signals } from "@solarity/zkit";
 
-import { loadOutputs, outputSignalsCompare } from "./utils";
+import { checkCircuitZKit, loadOutputs, outputSignalsCompare } from "./utils";
+import { STRICT_PROPERTY, WITNESS_INPUTS_METHOD, WITNESS_OUTPUTS_METHOD } from "./constants";
 
 export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
-  chai.Assertion.addProperty("strict", function (this: any) {
+  chai.Assertion.addProperty(STRICT_PROPERTY, function (this: any) {
     utils.flag(this, "strict", true);
 
     return this;
   });
 
-  chai.Assertion.addMethod("witnessInputs", function (this: any, inputs: Signals) {
+  chai.Assertion.addMethod(WITNESS_INPUTS_METHOD, function (this: any, inputs: Signals) {
     const obj = utils.flag(this, "object");
 
-    if (!(obj instanceof CircuitZKit)) {
-      throw new Error("`witnessInputs` is expected to be called on `CircuitZKit`");
-    }
+    checkCircuitZKit(obj, WITNESS_INPUTS_METHOD);
 
     const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
       const witness = await obj.calculateWitness(inputs);
@@ -29,13 +28,11 @@ export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
     return this;
   });
 
-  chai.Assertion.addMethod("witnessOutputs", function (this: any, outputs: Signals | NumberLike[]) {
+  chai.Assertion.addMethod(WITNESS_OUTPUTS_METHOD, function (this: any, outputs: Signals | NumberLike[]) {
     const obj = utils.flag(this, "object");
     const isStrict = utils.flag(this, "strict");
 
-    if (!(obj instanceof CircuitZKit)) {
-      throw new Error("`witnessOutputs` is expected to be called on `CircuitZKit`");
-    }
+    checkCircuitZKit(obj, WITNESS_OUTPUTS_METHOD);
 
     const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
       const witness = utils.flag(this, "witness");

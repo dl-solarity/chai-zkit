@@ -1,44 +1,30 @@
-import { CircuitZKit, NumberLike, Signals } from "@solarity/zkit";
+import { Signals } from "@solarity/zkit";
 
-import { outputSignalsCompare } from "./utils";
+import { GENERATE_PROOF_METHOD, USE_SOLIDITY_VERIFIER_METHOD, VERIFY_PROOF_METHOD } from "./constants";
+import { checkCircuitZKit } from "./utils";
 
 export function proof(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
-  chai.Assertion.addMethod("generateProof", function (this: any, inputs: Signals) {
+  chai.Assertion.addMethod(GENERATE_PROOF_METHOD, function (this: any, inputs: Signals) {
     const obj = utils.flag(this, "object");
 
-    if (!(obj instanceof CircuitZKit)) {
-      throw new Error("`generateProof` is expected to be called on `CircuitZKit`");
-    }
+    checkCircuitZKit(obj, GENERATE_PROOF_METHOD);
 
     const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-      const proof = await obj.generateProof(inputs);
+      let isGenerated = true;
 
-      utils.flag(this, "inputs", inputs);
-      utils.flag(this, "generatedProof", proof);
-    });
+      try {
+        const proof = await obj.generateProof(inputs);
 
-    this.then = promise.then.bind(promise);
-    this.catch = promise.catch.bind(promise);
-
-    return this;
-  });
-
-  chai.Assertion.addMethod("publicSignals", function (this: any, pubSignals: Signals | NumberLike[]) {
-    const obj = utils.flag(this, "object");
-    const isStrict = utils.flag(this, "strict");
-
-    if (!(obj instanceof CircuitZKit)) {
-      throw new Error("`publicSignals` is expected to be called on `CircuitZKit`");
-    }
-
-    const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-      const generatedProof = utils.flag(this, "generatedProof");
-
-      if (!generatedProof) {
-        throw new Error("`publicSignals` is expected to be called after `generateProof`");
+        utils.flag(this, "generatedProof", proof);
+      } catch (e) {
+        isGenerated = false;
       }
 
-      outputSignalsCompare(this, generatedProof.publicSignals, pubSignals, isStrict);
+      this.assert(
+        isGenerated,
+        "Expected proof generation to be successful, but it isn't",
+        "Expected proof generation NOT to be successful, but it is",
+      );
     });
 
     this.then = promise.then.bind(promise);
@@ -47,16 +33,35 @@ export function proof(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
     return this;
   });
 
-  chai.Assertion.addMethod("verifyProof", function (this: any, proof: any) {
+  chai.Assertion.addMethod(USE_SOLIDITY_VERIFIER_METHOD, function (this: any, verifierContract: any) {
     const obj = utils.flag(this, "object");
 
-    if (!(obj instanceof CircuitZKit)) {
-      throw new Error("`verifyProof` is expected to be called on `CircuitZKit`");
-    }
+    checkCircuitZKit(obj, USE_SOLIDITY_VERIFIER_METHOD);
+
+    utils.flag(this, "solidityVerifier", verifierContract);
+
+    return this;
+  });
+
+  chai.Assertion.addMethod(VERIFY_PROOF_METHOD, function (this: any, proof: any) {
+    const obj = utils.flag(this, "object");
+
+    checkCircuitZKit(obj, VERIFY_PROOF_METHOD);
 
     const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
+      let verificationResult: boolean;
+      const solidityVerifier = utils.flag(this, "solidityVerifier");
+
+      if (solidityVerifier) {
+        const calldata = await obj.generateCalldata(proof);
+
+        verificationResult = await solidityVerifier.verifyProof(...calldata);
+      } else {
+        verificationResult = await obj.verifyProof(proof);
+      }
+
       this.assert(
-        await obj.verifyProof(proof),
+        verificationResult,
         "Expected proof verification result to be true, but it isn't",
         "Expected proof verification result NOT to be true, but it is",
       );

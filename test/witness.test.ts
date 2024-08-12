@@ -68,7 +68,7 @@ describe("witness", () => {
     it("should not pass if not called on zkit", async () => {
       /// @ts-ignore
       expect(() => expect(1).to.have.witnessInputs({ d, e })).to.throw(
-        "`witnessInputs` is expected to be called on `CircuitZKit`",
+        "'witnessInputs' is expected to be called on 'CircuitZKit'",
       );
     });
 
@@ -92,7 +92,7 @@ describe("witness", () => {
     it("should not pass if not called on zkit", async () => {
       /// @ts-ignore
       expect(() => expect(1).to.have.witnessOutputs({ d, e })).to.throw(
-        "`witnessOutputs` is expected to be called on `CircuitZKit`",
+        "'witnessOutputs' is expected to be called on 'CircuitZKit'",
       );
     });
 
