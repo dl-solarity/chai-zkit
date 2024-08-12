@@ -3,13 +3,14 @@ import { expect } from "chai";
 import * as fs from "fs";
 import path from "path";
 
-import { NumberLike, CircuitZKit } from "@solarity/zkit";
+import { NumberLike, CircuitZKit, Signals } from "@solarity/zkit";
 
 import { useFixtureProject } from "./helpers";
 
 import "../src";
 
 import { Matrix, NoInputs } from "./fixture-projects/complex-circuits/generated-types/zkit";
+import { flattenSignals } from "../src/utils";
 
 describe("witness", () => {
   let a: NumberLike[][];
@@ -28,6 +29,10 @@ describe("witness", () => {
 
   function getVerifiersDirFullPath(): string {
     return path.join(process.cwd(), "contracts", "verifiers");
+  }
+
+  function getSignalsArr(signals: Signals): string[] {
+    return flattenSignals(signals).map((val: NumberLike) => val.toString());
   }
 
   useFixtureProject("complex-circuits");
@@ -169,28 +174,7 @@ describe("witness", () => {
     });
 
     it("should not pass for base CircuitZKit object and expected outputs length bigger than actual", async () => {
-      const wrongOutputs: string[] = [
-        "2",
-        "0x5",
-        "0",
-        "17",
-        "26",
-        "0",
-        "0",
-        "0",
-        "0",
-        "1",
-        "4",
-        "0",
-        "16",
-        "25",
-        "0",
-        "0",
-        "0",
-        "0",
-        "1",
-        "1",
-      ];
+      const wrongOutputs: string[] = getSignalsArr({ d, e, f, c });
 
       await expect(
         expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs(wrongOutputs),
@@ -210,29 +194,7 @@ describe("witness", () => {
     });
 
     it("should pass for base CircuitZKit object", async () => {
-      await expect(baseMatrix)
-        .with.witnessInputs({ a, b, c })
-        .to.have.witnessOutputs([
-          "2",
-          "0x5",
-          "0",
-          "17",
-          "26",
-          "0",
-          "0",
-          "0",
-          "0",
-          "1",
-          "4",
-          "0",
-          "16",
-          "25",
-          "0",
-          "0",
-          "0",
-          "0",
-          "1",
-        ]);
+      await expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs(getSignalsArr({ d, e, f }));
     });
   });
 });

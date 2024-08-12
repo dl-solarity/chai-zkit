@@ -131,9 +131,7 @@ describe("proof", () => {
     });
 
     it("should not pass if pass valid proof with solidity contract verifier with negation", async function () {
-      const MatrixFactory = await this.hre.ethers.getContractFactory("MatrixVerifier");
-      const matrixVerifier = await MatrixFactory.deploy();
-
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       await expect(expect(matrix).to.useSolidityVerifer(matrixVerifier).and.not.verifyProof(proof)).to.be.rejectedWith(
@@ -142,9 +140,7 @@ describe("proof", () => {
     });
 
     it("should not pass if pass invalid proof with solidity contract verifier without negation", async function () {
-      const MatrixFactory = await this.hre.ethers.getContractFactory("MatrixVerifier");
-      const matrixVerifier = await MatrixFactory.deploy();
-
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       proof.publicSignals.f = "30";
@@ -161,9 +157,7 @@ describe("proof", () => {
     });
 
     it("should correctly verify proof with solidity contract verifier", async function () {
-      const MatrixFactory = await this.hre.ethers.getContractFactory("MatrixVerifier");
-      const matrixVerifier = await MatrixFactory.deploy();
-
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       await expect(matrix).to.useSolidityVerifer(matrixVerifier).and.verifyProof(proof);
@@ -185,9 +179,7 @@ describe("proof", () => {
     });
 
     it("should correctly verify proof with solidity contract verifier and negation", async function () {
-      const MatrixFactory = await this.hre.ethers.getContractFactory("MatrixVerifier");
-      const matrixVerifier = await MatrixFactory.deploy();
-
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       proof.publicSignals.f = "30";
