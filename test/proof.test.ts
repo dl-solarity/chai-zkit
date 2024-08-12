@@ -95,11 +95,11 @@ describe("proof", () => {
     });
   });
 
-  describe("useSolidityVerifer", () => {
+  describe("useSolidityVerifier", () => {
     it("should not pass if not called on zkit", async () => {
       /// @ts-ignore
-      expect(() => expect(1).to.useSolidityVerifer({ a: 1 })).to.throw(
-        "'useSolidityVerifer' is expected to be called on 'CircuitZKit'",
+      expect(() => expect(1).to.useSolidityVerifier({ a: 1 })).to.throw(
+        "'useSolidityVerifier' is expected to be called on 'CircuitZKit'",
       );
     });
   });
@@ -134,7 +134,7 @@ describe("proof", () => {
       const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
-      await expect(expect(matrix).to.useSolidityVerifer(matrixVerifier).and.not.verifyProof(proof)).to.be.rejectedWith(
+      await expect(expect(matrix).to.useSolidityVerifier(matrixVerifier).and.not.verifyProof(proof)).to.be.rejectedWith(
         "Expected proof verification result NOT to be true, but it is",
       );
     });
@@ -145,7 +145,7 @@ describe("proof", () => {
 
       proof.publicSignals.f = "30";
 
-      await expect(expect(matrix).to.useSolidityVerifer(matrixVerifier).and.verifyProof(proof)).to.be.rejectedWith(
+      await expect(expect(matrix).to.useSolidityVerifier(matrixVerifier).and.verifyProof(proof)).to.be.rejectedWith(
         "Expected proof verification result to be true, but it isn't",
       );
     });
@@ -160,7 +160,7 @@ describe("proof", () => {
       const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
       const proof = await matrix.generateProof({ a, b, c });
 
-      await expect(matrix).to.useSolidityVerifer(matrixVerifier).and.verifyProof(proof);
+      await expect(matrix).to.useSolidityVerifier(matrixVerifier).and.verifyProof(proof);
     });
 
     it("should correctly verify proof several times", async () => {
@@ -184,7 +184,7 @@ describe("proof", () => {
 
       proof.publicSignals.f = "30";
 
-      await expect(matrix).to.useSolidityVerifer(matrixVerifier).and.not.verifyProof(proof);
+      await expect(matrix).to.useSolidityVerifier(matrixVerifier).and.not.verifyProof(proof);
     });
   });
 });

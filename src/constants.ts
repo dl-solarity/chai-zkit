@@ -1,5 +1,5 @@
 export const GENERATE_PROOF_METHOD: string = "generateProof";
-export const USE_SOLIDITY_VERIFIER_METHOD: string = "useSolidityVerifer";
+export const USE_SOLIDITY_VERIFIER_METHOD: string = "useSolidityVerifier";
 export const VERIFY_PROOF_METHOD: string = "verifyProof";
 
 export const STRICT_PROPERTY: string = "strict";

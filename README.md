@@ -19,14 +19,14 @@ npm install --save-dev @solarity/chai-zkit
 
 And add the following line to your `hardhat.config`:
 
-```js
-require("@solarity/chai-zkit");
-```
-
-Or if you are using TypeScript:
-
 ```ts
 import "@solarity/chai-zkit";
+```
+
+Or if you are using JavaScript:
+
+```js
+require("@solarity/chai-zkit");
 ```
 
 ## Usage
@@ -35,6 +35,8 @@ import "@solarity/chai-zkit";
 > The package is meant to be used together with [hardhat-zkit](https://github.com/dl-solarity/hardhat-zkit) plugin that provides circuits objects to be tested with chai assertions.
 
 After installing the package, you may use the following assertions:
+
+### Witness testing
 
 ```ts
 const matrix = await zkit.getCircuit("Matrix");
@@ -49,14 +51,27 @@ await expect(matrix).with.witnessInputs({ a, b, c }).to.have.strict.witnessOutpu
 await expect(expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ e })).to.be.rejectedWith(
   `Expected output "e" to be "[[2,5,0],[17,26,0],[0,0,0]]", but got "[[1,4,0],[16,25,0],[0,0,0]]"`,
 );
+```
 
-// `not` negation used, provided output `d` matches the obtained one
-await expect(
-  expect(matrix).with.witnessInputs({ a, b, c }).to.not.have.witnessOutputs({ d }),
-).to.be.rejectedWith(`Expected output "d" NOT to be "[[2,5,0],[17,26,0],[0,0,0]]", but it is"`);
+### Proof testing
+
+```ts
+const matrix = await zkit.getCircuit("Matrix");
+
+// proof generation assertion
+await expect(matrix).to.generateProof({ a, b, c });
+await expect(matrix).to.not.generateProof({ b, c, d });
+
+const proof = await matrix.generateProof({ a, b, c });
+
+// proof verification assertion
+await expect(matrix).to.verifyProof(proof);
+await expect(matrix).to.not.verifyProof(otherProof);
+
+// use generated solidity verifier to verify the proof
+await expect(matrix).to.useSolidityVerifier(matrixVerifier).and.verifyProof(proof);
 ```
 
 ## Known limitations
 
 - Do not use `not` chai negation prior `witnessInputs` call, this will break the typization.
-- Temporarily, only the witness `input <> output` signals testing is supported.
