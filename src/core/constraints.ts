@@ -1,4 +1,4 @@
-import { getConstraintsNumber, isCircuitZKit } from "./utils";
+import { getConstraintsNumber, isCircuitZKit } from "../utils";
 
 export function constraints(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   chai.Assertion.addProperty("constraints", function (this: any) {

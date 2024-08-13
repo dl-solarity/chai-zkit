@@ -1,6 +1,4 @@
-import { witness } from "./witness";
-import { proof } from "./proof";
-import { constraints } from "./constraints";
+import { witness, proof, constraints } from "./core";
 
 export function chaiZkit(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   witness(chai, utils);
