@@ -44,6 +44,38 @@ export function stringifySignal(signal: Signal): string {
   return JSON.stringify(signal, (_, v) => (typeof v === "bigint" ? v.toString() : v)).replaceAll(`"`, "");
 }
 
+export function getConstraintsNumber(r1csFilePath: string): number {
+  const r1csDescriptor = fs.openSync(r1csFilePath, "r");
+
+  const readBytes = (position: number, length: number): bigint => {
+    const buffer = Buffer.alloc(length);
+
+    fs.readSync(r1csDescriptor, buffer, { length, position });
+
+    return BigInt(`0x${buffer.reverse().toString("hex")}`);
+  };
+
+  /// @dev https://github.com/iden3/r1csfile/blob/d82959da1f88fbd06db0407051fde94afbf8824a/doc/r1cs_bin_format.md#format-of-the-file
+  const numberOfSections = readBytes(8, 4);
+  let sectionStart = 12;
+
+  for (let i = 0; i < numberOfSections; ++i) {
+    const sectionType = Number(readBytes(sectionStart, 4));
+    const sectionSize = Number(readBytes(sectionStart + 4, 8));
+
+    /// @dev Reading header section
+    if (sectionType == 1) {
+      const totalConstraintsOffset = 4 + 8 + 4 + 32 + 4 + 4 + 4 + 4 + 8;
+
+      return Number(readBytes(sectionStart + totalConstraintsOffset, 4));
+    }
+
+    sectionStart += 4 + 8 + sectionSize;
+  }
+
+  throw new Error(`Header section in ${r1csFilePath} file is not found.`);
+}
+
 function loadSym(zkit: CircuitZKit): Map<string, number> {
   const symFile = zkit.mustGetArtifactsFilePath("sym");
   const signals = new Map<string, number>();

@@ -48,6 +48,10 @@ export function checkCircuitZKit(circuitZKit: any, methodName: string) {
   }
 }
 
+export function isCircuitZKit(circuitZKit: any): circuitZKit is CircuitZKit {
+  return circuitZKit instanceof CircuitZKit;
+}
+
 function compareSignals(actualSignal: Signal, expectedSignal: Signal): boolean {
   const actualSignalValues: NumberLike[] = flattenSignal(actualSignal);
   const expectedSignalValues: NumberLike[] = flattenSignal(expectedSignal);
