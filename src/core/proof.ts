@@ -1,7 +1,7 @@
 import { Signals } from "@solarity/zkit";
 
-import { GENERATE_PROOF_METHOD, USE_SOLIDITY_VERIFIER_METHOD, VERIFY_PROOF_METHOD } from "./constants";
-import { checkCircuitZKit } from "./utils";
+import { GENERATE_PROOF_METHOD, USE_SOLIDITY_VERIFIER_METHOD, VERIFY_PROOF_METHOD } from "../constants";
+import { checkCircuitZKit } from "../utils";
 
 export function proof(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   chai.Assertion.addMethod(GENERATE_PROOF_METHOD, function (this: any, inputs: Signals) {

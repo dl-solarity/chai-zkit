@@ -1,7 +1,7 @@
 import { CircuitZKit, NumberLike, Signals } from "@solarity/zkit";
 
-import { checkCircuitZKit, loadOutputs, outputSignalsCompare } from "./utils";
-import { STRICT_PROPERTY, WITNESS_INPUTS_METHOD, WITNESS_OUTPUTS_METHOD } from "./constants";
+import { STRICT_PROPERTY, WITNESS_INPUTS_METHOD, WITNESS_OUTPUTS_METHOD } from "../constants";
+import { checkCircuitZKit, loadOutputs, outputSignalsCompare } from "../utils";
 
 export function witness(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
   chai.Assertion.addProperty(STRICT_PROPERTY, function (this: any) {
