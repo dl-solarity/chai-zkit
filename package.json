@@ -1,6 +1,6 @@
 {
   "name": "@solarity/chai-zkit",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "author": "Distributed Lab",
   "readme": "README.md",
@@ -19,6 +19,8 @@
     "solarity",
     "circom",
     "chai",
+    "chai-plugin",
+    "assertions",
     "zkp"
   ],
   "main": "dist/index.js",
