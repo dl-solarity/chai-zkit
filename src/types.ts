@@ -21,18 +21,7 @@ declare global {
       <T>(val: T, message?: string): Assertion<T>;
     }
 
-    interface Witness<T = any> {
-      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
-    }
-
-    interface Proof<T = any> {
-      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
-      useSolidityVerifier(verifierContract: any): AsyncAssertion<T>;
-    }
-
-    interface AsyncAssertion<T = any> extends Promise<void>, Witness<T>, Proof<T> {
+    interface AsyncAssertion<T = any> extends Promise<void> {
       not: AsyncAssertion<T>;
       strict: AsyncAssertion<T>;
       constraints: AsyncAssertion<T>;
@@ -51,9 +40,16 @@ declare global {
       same: AsyncAssertion<T>;
       but: AsyncAssertion<T>;
       does: AsyncAssertion<T>;
+
+      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+
+      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+      useSolidityVerifier(verifierContract: any): AsyncAssertion<T>;
     }
 
-    interface Assertion<T = any> extends Witness<T>, Proof<T> {
+    interface Assertion<T = any> {
       constraints: Assertion<T>;
       to: Assertion<T>;
       be: Assertion<T>;
@@ -70,6 +66,13 @@ declare global {
       same: Assertion<T>;
       but: Assertion<T>;
       does: Assertion<T>;
+
+      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+
+      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
+      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+      useSolidityVerifier(verifierContract: any): AsyncAssertion<T>;
     }
   }
 }
