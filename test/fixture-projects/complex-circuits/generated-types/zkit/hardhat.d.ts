@@ -7,7 +7,7 @@ import * as Circuits from ".";
 
 declare module "hardhat/types/runtime" {
   interface HardhatZKit {
-    getCircuit(name: "Matrix"): Promise<Circuits.Matrix>;
-    getCircuit(name: "NoInputs"): Promise<Circuits.NoInputs>;
+    getCircuit(name: "Matrix", protocol: "groth16"): Promise<Circuits.Matrix>;
+    getCircuit(name: "NoInputs", protocol: "groth16"): Promise<Circuits.NoInputs>;
   }
 }

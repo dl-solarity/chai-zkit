@@ -3,34 +3,44 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { CircuitZKit, CircuitZKitConfig, Groth16Proof, NumberLike, NumericString, PublicSignals } from "@solarity/zkit";
+import {
+  CircuitZKit,
+  CircuitZKitConfig,
+  Groth16Proof,
+  PlonkProof,
+  NumberLike,
+  NumericString,
+  PublicSignals,
+  Groth16Implementer,
+  PlonkImplementer,
+} from "@solarity/zkit";
 
 import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
 
-export type PrivateNoInputs = {};
+export type PrivateNoInputsGroth16 = {};
 
-export type PublicNoInputs = {
+export type PublicNoInputsGroth16 = {
   c: NumberLike;
 };
 
-export type ProofNoInputs = {
+export type ProofNoInputsGroth16 = {
   proof: Groth16Proof;
-  publicSignals: PublicNoInputs;
+  publicSignals: PublicNoInputsGroth16;
 };
 
-export type Calldata = [
+export type CalldataNoInputsGroth16 = [
   [NumericString, NumericString],
   [[NumericString, NumericString], [NumericString, NumericString]],
   [NumericString, NumericString],
   [NumericString],
 ];
 
-export class NoInputs extends CircuitZKit {
+export class NoInputs extends CircuitZKit<"groth16"> {
   constructor(config: CircuitZKitConfig) {
-    super(config);
+    super(config, new Groth16Implementer());
   }
 
-  public async generateProof(inputs: PrivateNoInputs): Promise<ProofNoInputs> {
+  public async generateProof(inputs: PrivateNoInputsGroth16): Promise<ProofNoInputsGroth16> {
     const proof = await super.generateProof(inputs as any);
 
     return {
@@ -39,18 +49,18 @@ export class NoInputs extends CircuitZKit {
     };
   }
 
-  public async calculateWitness(inputs: PrivateNoInputs): Promise<bigint[]> {
+  public async calculateWitness(inputs: PrivateNoInputsGroth16): Promise<bigint[]> {
     return super.calculateWitness(inputs as any);
   }
 
-  public async verifyProof(proof: ProofNoInputs): Promise<boolean> {
+  public async verifyProof(proof: ProofNoInputsGroth16): Promise<boolean> {
     return super.verifyProof({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
   }
 
-  public async generateCalldata(proof: ProofNoInputs): Promise<Calldata> {
+  public async generateCalldata(proof: ProofNoInputsGroth16): Promise<CalldataNoInputsGroth16> {
     return super.generateCalldata({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
@@ -70,11 +80,11 @@ export class NoInputs extends CircuitZKit {
     }
   }
 
-  private _normalizePublicSignals(publicSignals: PublicSignals): PublicNoInputs {
+  private _normalizePublicSignals(publicSignals: PublicSignals): PublicNoInputsGroth16 {
     return normalizePublicSignals(publicSignals, this.getSignalNames(), this.getSignalDimensions);
   }
 
-  private _denormalizePublicSignals(publicSignals: PublicNoInputs): PublicSignals {
+  private _denormalizePublicSignals(publicSignals: PublicNoInputsGroth16): PublicSignals {
     return denormalizePublicSignals(publicSignals, this.getSignalNames());
   }
 }

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import * as fs from "fs";
 import path from "path";
 
-import { NumberLike, CircuitZKit, Signals } from "@solarity/zkit";
+import { NumberLike, CircuitZKit, Signals, Groth16Implementer } from "@solarity/zkit";
 
 import { useFixtureProject } from "./helpers";
 
@@ -20,7 +20,7 @@ describe("witness", () => {
   let e: NumberLike[][];
   let f: NumberLike;
 
-  let baseMatrix: CircuitZKit;
+  let baseMatrix: CircuitZKit<"groth16">;
   let matrix: Matrix;
 
   function getArtifactsFullPath(circuitDirSourceName: string): string {
@@ -42,7 +42,7 @@ describe("witness", () => {
     const circuitArtifactsPath = getArtifactsFullPath(`${circuitName}.circom`);
     const verifierDirPath = getVerifiersDirFullPath();
 
-    baseMatrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath });
+    baseMatrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath }, new Groth16Implementer());
     matrix = new Matrix({ circuitName, circuitArtifactsPath, verifierDirPath });
 
     a = [

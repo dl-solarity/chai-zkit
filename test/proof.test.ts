@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import path from "path";
 
-import { NumberLike, CircuitZKit } from "@solarity/zkit";
+import { NumberLike, CircuitZKit, Groth16Implementer } from "@solarity/zkit";
 
 import { useFixtureProject } from "./helpers";
 
@@ -17,7 +17,7 @@ describe("proof", () => {
   let e: NumberLike[][];
   let f: NumberLike;
 
-  let baseMatrix: CircuitZKit;
+  let baseMatrix: CircuitZKit<"groth16">;
   let matrix: Matrix;
 
   function getArtifactsFullPath(circuitDirSourceName: string): string {
@@ -35,7 +35,7 @@ describe("proof", () => {
     const circuitArtifactsPath = getArtifactsFullPath(`${circuitName}.circom`);
     const verifierDirPath = getVerifiersDirFullPath();
 
-    baseMatrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath });
+    baseMatrix = new CircuitZKit({ circuitName, circuitArtifactsPath, verifierDirPath }, new Groth16Implementer());
     matrix = new Matrix({ circuitName, circuitArtifactsPath, verifierDirPath });
 
     a = [
@@ -131,7 +131,7 @@ describe("proof", () => {
     });
 
     it("should not pass if pass valid proof with solidity contract verifier with negation", async function () {
-      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixGroth16Verifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       await expect(expect(matrix).to.useSolidityVerifier(matrixVerifier).and.not.verifyProof(proof)).to.be.rejectedWith(
@@ -140,7 +140,7 @@ describe("proof", () => {
     });
 
     it("should not pass if pass invalid proof with solidity contract verifier without negation", async function () {
-      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixGroth16Verifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       proof.publicSignals.f = "30";
@@ -157,7 +157,7 @@ describe("proof", () => {
     });
 
     it("should correctly verify proof with solidity contract verifier", async function () {
-      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixGroth16Verifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       await expect(matrix).to.useSolidityVerifier(matrixVerifier).and.verifyProof(proof);
@@ -179,7 +179,7 @@ describe("proof", () => {
     });
 
     it("should correctly verify proof with solidity contract verifier and negation", async function () {
-      const matrixVerifier = await this.hre.ethers.deployContract("MatrixVerifier");
+      const matrixVerifier = await this.hre.ethers.deployContract("MatrixGroth16Verifier");
       const proof = await matrix.generateProof({ a, b, c });
 
       proof.publicSignals.f = "30";

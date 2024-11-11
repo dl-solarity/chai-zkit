@@ -32,105 +32,105 @@ describe("constraints", () => {
 
   describe("above", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.above(6);
+      await expect(matrix).constraints.above(6);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.above(10);
+      await expect(matrix).constraints.not.above(36);
     });
   });
 
   describe("gt", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.gt(6);
+      await expect(matrix).constraints.gt(6);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.gt(10);
+      await expect(matrix).constraints.not.gt(36);
     });
   });
 
   describe("greaterThan", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.greaterThan(6);
+      await expect(matrix).constraints.greaterThan(6);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.greaterThan(10);
+      await expect(matrix).constraints.not.greaterThan(36);
     });
   });
 
   describe("below", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.below(10);
+      await expect(matrix).constraints.below(37);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.below(6);
+      await expect(matrix).constraints.not.below(6);
     });
   });
 
   describe("lt", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.lt(10);
+      await expect(matrix).constraints.lt(37);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.lt(6);
+      await expect(matrix).constraints.not.lt(6);
     });
   });
 
   describe("lessThan", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.lessThan(10);
+      await expect(matrix).constraints.lessThan(37);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.lessThan(6);
+      await expect(matrix).constraints.not.lessThan(6);
     });
   });
 
   describe("most", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.most(8);
-      expect(matrix).constraints.lessThanOrEqual(10);
+      await expect(matrix).constraints.most(36);
+      await expect(matrix).constraints.lessThanOrEqual(36);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.most(7);
+      await expect(matrix).constraints.not.most(7);
     });
   });
 
   describe("lte", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.lte(8);
-      expect(matrix).constraints.lessThanOrEqual(10);
+      await expect(matrix).constraints.lte(36);
+      await expect(matrix).constraints.lessThanOrEqual(36);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.lte(7);
+      await expect(matrix).constraints.not.lte(35);
     });
   });
 
   describe("lessThanOrEqual", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.lessThanOrEqual(8);
-      expect(matrix).constraints.lessThanOrEqual(10);
+      await expect(matrix).constraints.lessThanOrEqual(36);
+      await expect(matrix).constraints.lessThanOrEqual(38);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.lessThanOrEqual(7);
+      await expect(matrix).constraints.not.lessThanOrEqual(7);
     });
   });
 
   describe("within", () => {
     it("should pass with circuitZKit obj", async () => {
-      expect(matrix).constraints.within(7, 10);
+      await expect(matrix).constraints.within(30, 37);
     });
 
     it("should pass with circuitZKit obj and negation", async () => {
-      expect(matrix).constraints.not.within(10, 12);
-      expect(matrix).constraints.not.within(5, 7);
+      await expect(matrix).constraints.not.within(10, 12);
+      await expect(matrix).constraints.not.within(37, 40);
     });
   });
 
@@ -143,9 +143,7 @@ describe("constraints", () => {
       fs.rmSync(r1csFilePath);
       fs.writeFileSync(r1csFilePath, "");
 
-      expect(function () {
-        getConstraintsNumber(r1csFilePath);
-      }).to.throw(`Header section in ${r1csFilePath} file is not found.`);
+      await expect(getConstraintsNumber(r1csFilePath, "groth16")).to.be.rejectedWith(`Invalid File format`);
 
       fs.writeFileSync(r1csFilePath, r1csFileContent);
     });
