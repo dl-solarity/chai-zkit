@@ -1,0 +1,10 @@
+{
+  "name": "plonk-circuits",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "npm run zkit-compile && npm run zkit-verifiers && npm run solidity-compile",
+    "solidity-compile": "npx hardhat compile --force",
+    "zkit-compile": "npx hardhat zkit:compile --force",
+    "zkit-verifiers": "npx hardhat zkit:verifiers"
+  }
+}
