@@ -78,12 +78,12 @@ await expect(matrix).to.useSolidityVerifier(matrixVerifier).and.verifyProof(proo
 const matrix = await zkit.getCircuit("Matrix");
 
 // constraints > 6
-expect(matrix).to.have.constraints.gt(6);
-expect(matrix).to.have.constraints.greaterThan(6);
+await expect(matrix).to.have.constraints.gt(6);
+await expect(matrix).to.have.constraints.greaterThan(6);
 
 // constraints < 10
-expect(matrix).to.have.constraints.lt(10);
-expect(matrix).to.have.constraints.lessThan(10);
+await expect(matrix).to.have.constraints.lt(10);
+await expect(matrix).to.have.constraints.lessThan(10);
 ```
 
 ## Known limitations

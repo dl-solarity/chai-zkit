@@ -7,255 +7,43 @@ export function constraints(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void 
     return this;
   });
 
-  chai.Assertion.overwriteMethod("above", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
+  const methods = ["above", "gt", "greaterThan", "below", "lt", "lessThan", "most", "lte", "lessThanOrEqual", "within"];
 
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.above(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
+  methods.forEach((method) => {
+    chai.Assertion.overwriteMethod(method, function (_super) {
+      return function (this: any, ...args: [number | Date, number?]) {
+        return handleAssertion(chai, utils, this, _super, method, ...args);
+      };
+    });
   });
+}
 
-  chai.Assertion.overwriteMethod("gt", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
+function handleAssertion(
+  chai: Chai.ChaiStatic,
+  utils: Chai.ChaiUtils,
+  context: any,
+  _super: any,
+  method: string,
+  ...args: [number | Date, number?]
+) {
+  const obj = utils.flag(context, "object");
 
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
+  if (isCircuitZKit(obj) && utils.flag(context, "constraints")) {
+    const promise = (context.then === undefined ? Promise.resolve() : context).then(async () => {
+      const newAssertion = new chai.Assertion(
+        await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
+      );
 
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
+      utils.flag(newAssertion, "negate", utils.flag(context, "negate"));
 
-          newAssertation.to.gt(num);
-        });
+      (newAssertion.to as any)[method](...args);
+    });
 
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
+    context.then = promise.then.bind(promise);
+    context.catch = promise.catch.bind(promise);
 
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
+    return context;
+  }
 
-  chai.Assertion.overwriteMethod("greaterThan", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.greaterThan(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("below", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.below(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("lt", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.lt(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("lessThan", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.lessThan(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("most", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.most(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("lte", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.lte(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("lessThanOrEqual", function (_super) {
-    return function (this: any, num: number | Date) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const newAssertation = new chai.Assertion(
-            await getConstraintsNumber(obj.mustGetArtifactsFilePath("r1cs"), obj.getProvingSystemType()),
-          );
-
-          utils.flag(newAssertation, "negate", utils.flag(this, "negate"));
-
-          newAssertation.to.lessThanOrEqual(num);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
-
-  chai.Assertion.overwriteMethod("within", function (_super) {
-    return function (this: any, start: number, finish: number) {
-      const obj = utils.flag(this, "object");
-
-      if (isCircuitZKit(obj) && utils.flag(this, "constraints")) {
-        const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-          const constraintsNumber = await getConstraintsNumber(
-            obj.mustGetArtifactsFilePath("r1cs"),
-            obj.getProvingSystemType(),
-          );
-
-          const newAssertion = new chai.Assertion(constraintsNumber);
-          utils.flag(newAssertion, "negate", utils.flag(this, "negate"));
-
-          newAssertion.to.within(start, finish);
-        });
-
-        this.then = promise.then.bind(promise);
-        this.catch = promise.catch.bind(promise);
-
-        return this;
-      } else {
-        _super.apply(this, arguments);
-      }
-    };
-  });
+  return _super.apply(context, args);
 }

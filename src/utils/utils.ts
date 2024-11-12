@@ -4,7 +4,7 @@ import * as snarkjs from "snarkjs";
 import { CircuitZKit, NumberLike, Signal, Signals, ProvingSystemType } from "@solarity/zkit";
 
 import { BN128_CURVE_NAME } from "../constants";
-import { LinearCombination, R1CSConstraint } from "./types";
+import { LinearCombination, R1CSConstraint } from "../types/utils";
 
 export function loadOutputs(zkit: CircuitZKit<ProvingSystemType>, witness: bigint[], inputs: Signals): Signals {
   const signalToIndex = loadSym(zkit);
