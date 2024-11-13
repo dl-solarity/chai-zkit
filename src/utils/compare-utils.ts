@@ -1,4 +1,4 @@
-import { NumberLike, Signals, Signal, CircuitZKit } from "@solarity/zkit";
+import { NumberLike, Signals, Signal, CircuitZKit, ProvingSystemType } from "@solarity/zkit";
 
 import { flattenSignals, flattenSignal, stringifySignal } from "./utils";
 
@@ -48,7 +48,7 @@ export function checkCircuitZKit(circuitZKit: any, methodName: string) {
   }
 }
 
-export function isCircuitZKit(circuitZKit: any): circuitZKit is CircuitZKit {
+export function isCircuitZKit(circuitZKit: any): circuitZKit is CircuitZKit<ProvingSystemType> {
   return circuitZKit instanceof CircuitZKit;
 }
 

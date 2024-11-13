@@ -17,28 +17,51 @@ import {
 
 import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
 
-export type PrivateMatrixGroth16 = {
+export type PrivateMatrixPlonk = {
   a: NumberLike[][];
   b: NumberLike[][];
   c: NumberLike;
 };
 
-export type PublicMatrixGroth16 = {
+export type PublicMatrixPlonk = {
   d: NumberLike[][];
   e: NumberLike[][];
   f: NumberLike;
   a: NumberLike[][];
 };
 
-export type ProofMatrixGroth16 = {
-  proof: Groth16Proof;
-  publicSignals: PublicMatrixGroth16;
+export type ProofMatrixPlonk = {
+  proof: PlonkProof;
+  publicSignals: PublicMatrixPlonk;
 };
 
-export type CalldataMatrixGroth16 = [
-  [NumericString, NumericString],
-  [[NumericString, NumericString], [NumericString, NumericString]],
-  [NumericString, NumericString],
+export type CalldataMatrixPlonk = [
+  [
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+    NumericString,
+  ],
   [
     NumericString,
     NumericString,
@@ -71,12 +94,12 @@ export type CalldataMatrixGroth16 = [
   ],
 ];
 
-export class Matrix extends CircuitZKit<"groth16"> {
+export class Matrix extends CircuitZKit<"plonk"> {
   constructor(config: CircuitZKitConfig) {
-    super(config, new Groth16Implementer());
+    super(config, new PlonkImplementer());
   }
 
-  public async generateProof(inputs: PrivateMatrixGroth16): Promise<ProofMatrixGroth16> {
+  public async generateProof(inputs: PrivateMatrixPlonk): Promise<ProofMatrixPlonk> {
     const proof = await super.generateProof(inputs as any);
 
     return {
@@ -85,18 +108,18 @@ export class Matrix extends CircuitZKit<"groth16"> {
     };
   }
 
-  public async calculateWitness(inputs: PrivateMatrixGroth16): Promise<bigint[]> {
+  public async calculateWitness(inputs: PrivateMatrixPlonk): Promise<bigint[]> {
     return super.calculateWitness(inputs as any);
   }
 
-  public async verifyProof(proof: ProofMatrixGroth16): Promise<boolean> {
+  public async verifyProof(proof: ProofMatrixPlonk): Promise<boolean> {
     return super.verifyProof({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
     });
   }
 
-  public async generateCalldata(proof: ProofMatrixGroth16): Promise<CalldataMatrixGroth16> {
+  public async generateCalldata(proof: ProofMatrixPlonk): Promise<CalldataMatrixPlonk> {
     return super.generateCalldata({
       proof: proof.proof,
       publicSignals: this._denormalizePublicSignals(proof.publicSignals),
@@ -122,11 +145,11 @@ export class Matrix extends CircuitZKit<"groth16"> {
     }
   }
 
-  private _normalizePublicSignals(publicSignals: PublicSignals): PublicMatrixGroth16 {
+  private _normalizePublicSignals(publicSignals: PublicSignals): PublicMatrixPlonk {
     return normalizePublicSignals(publicSignals, this.getSignalNames(), this.getSignalDimensions);
   }
 
-  private _denormalizePublicSignals(publicSignals: PublicMatrixGroth16): PublicSignals {
+  private _denormalizePublicSignals(publicSignals: PublicMatrixPlonk): PublicSignals {
     return denormalizePublicSignals(publicSignals, this.getSignalNames());
   }
 }
