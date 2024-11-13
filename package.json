@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.5",
-    "@solarity/hardhat-zkit": "^0.5.0-rc.0",
+    "@solarity/hardhat-zkit": "^0.5.0",
     "@solarity/zkit": "^0.3.0",
     "@types/chai": "^4.3.16",
     "@types/chai-as-promised": "^7.1.8",
