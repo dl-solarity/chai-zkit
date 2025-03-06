@@ -8,6 +8,7 @@ import {
   CircuitZKitConfig,
   Groth16Proof,
   PlonkProof,
+  Groth16ProofPoints,
   NumberLike,
   NumericString,
   PublicSignals,
@@ -15,7 +16,7 @@ import {
   PlonkImplementer,
 } from "@solarity/zkit";
 
-import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
+import { normalizePublicSignals, denormalizePublicSignals } from "../helpers";
 
 export type PrivateMatrixPlonk = {
   a: NumberLike[][];
@@ -35,8 +36,8 @@ export type ProofMatrixPlonk = {
   publicSignals: PublicMatrixPlonk;
 };
 
-export type CalldataMatrixPlonk = [
-  [
+export type CalldataMatrixPlonk = {
+  proofPoints: [
     NumericString,
     NumericString,
     NumericString,
@@ -61,8 +62,8 @@ export type CalldataMatrixPlonk = [
     NumericString,
     NumericString,
     NumericString,
-  ],
-  [
+  ];
+  publicSignals: [
     NumericString,
     NumericString,
     NumericString,
@@ -91,8 +92,8 @@ export type CalldataMatrixPlonk = [
     NumericString,
     NumericString,
     NumericString,
-  ],
-];
+  ];
+};
 
 export class Matrix extends CircuitZKit<"plonk"> {
   constructor(config: CircuitZKitConfig) {

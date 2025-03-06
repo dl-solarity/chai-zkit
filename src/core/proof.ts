@@ -55,7 +55,11 @@ export function proof(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
       if (solidityVerifier) {
         const calldata = await obj.generateCalldata(proof);
 
-        verificationResult = await solidityVerifier.verifyProof(...calldata);
+        const proofPointsValuesArr = Array.isArray(calldata.proofPoints)
+          ? [calldata.proofPoints]
+          : Object.values(calldata.proofPoints);
+
+        verificationResult = await solidityVerifier.verifyProof(...proofPointsValuesArr, calldata.publicSignals);
       } else {
         verificationResult = await obj.verifyProof(proof);
       }

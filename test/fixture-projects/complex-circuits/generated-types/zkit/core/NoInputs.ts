@@ -8,6 +8,7 @@ import {
   CircuitZKitConfig,
   Groth16Proof,
   PlonkProof,
+  Groth16ProofPoints,
   NumberLike,
   NumericString,
   PublicSignals,
@@ -15,7 +16,7 @@ import {
   PlonkImplementer,
 } from "@solarity/zkit";
 
-import { normalizePublicSignals, denormalizePublicSignals } from "../utils";
+import { normalizePublicSignals, denormalizePublicSignals } from "../helpers";
 
 export type PrivateNoInputsGroth16 = {};
 
@@ -28,12 +29,10 @@ export type ProofNoInputsGroth16 = {
   publicSignals: PublicNoInputsGroth16;
 };
 
-export type CalldataNoInputsGroth16 = [
-  [NumericString, NumericString],
-  [[NumericString, NumericString], [NumericString, NumericString]],
-  [NumericString, NumericString],
-  [NumericString],
-];
+export type CalldataNoInputsGroth16 = {
+  proofPoints: Groth16ProofPoints;
+  publicSignals: [NumericString];
+};
 
 export class NoInputs extends CircuitZKit<"groth16"> {
   constructor(config: CircuitZKitConfig) {
