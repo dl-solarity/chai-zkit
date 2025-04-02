@@ -9,6 +9,7 @@ import {
   Groth16Proof,
   PlonkProof,
   Groth16ProofPoints,
+  PlonkProofPoints,
   NumberLike,
   NumericString,
   PublicSignals,
@@ -37,32 +38,7 @@ export type ProofMatrixPlonk = {
 };
 
 export type CalldataMatrixPlonk = {
-  proofPoints: [
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-    NumericString,
-  ];
+  proofPoints: PlonkProofPoints;
   publicSignals: [
     NumericString,
     NumericString,

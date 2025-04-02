@@ -9,6 +9,7 @@ import {
   Groth16Proof,
   PlonkProof,
   Groth16ProofPoints,
+  PlonkProofPoints,
   NumberLike,
   NumericString,
   PublicSignals,
