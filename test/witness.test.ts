@@ -242,5 +242,29 @@ describe("witness", () => {
         await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ d });
       });
     });
+
+    describe("passConstraints", () => {
+      it("should pass if correct witness is generated", async () => {
+        await expect(matrix)
+          .with.witnessInputs({ a, b, c }, { "main.d[0][0]": 200n, "main.f": 10n })
+          .to.not.passConstraints();
+
+        await expect(matrix)
+          .with.witnessInputs(
+            { a, b, c },
+            {
+              "main.a[0][1]": 2n,
+              "main.b[1][0]": 4n,
+            },
+          )
+          .to.passConstraints();
+      });
+
+      it("should not allow to call passConstraints if withWitness was not called before", async () => {
+        await expect(expect(matrix).to.passConstraints()).to.be.rejectedWith(
+          "`passConstraints` is expected to be called after `witnessInputs`",
+        );
+      });
+    });
   });
 });
