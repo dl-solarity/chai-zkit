@@ -35,13 +35,18 @@ export type CalldataNoInputsGroth16 = {
   publicSignals: [NumericString];
 };
 
+export type QualifiedSignalNames = "main.c";
+
 export class NoInputs extends CircuitZKit<"groth16"> {
   constructor(config: CircuitZKitConfig) {
     super(config, new Groth16Implementer());
   }
 
-  public async generateProof(inputs: PrivateNoInputsGroth16): Promise<ProofNoInputsGroth16> {
-    const proof = await super.generateProof(inputs as any);
+  public async generateProof(
+    inputs: PrivateNoInputsGroth16,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<ProofNoInputsGroth16> {
+    const proof = await super.generateProof(inputs as any, witnessOverrides);
 
     return {
       proof: proof.proof,
@@ -49,8 +54,11 @@ export class NoInputs extends CircuitZKit<"groth16"> {
     };
   }
 
-  public async calculateWitness(inputs: PrivateNoInputsGroth16): Promise<bigint[]> {
-    return super.calculateWitness(inputs as any);
+  public async calculateWitness(
+    inputs: PrivateNoInputsGroth16,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<bigint[]> {
+    return super.calculateWitness(inputs as any, witnessOverrides);
   }
 
   public async verifyProof(proof: ProofNoInputsGroth16): Promise<boolean> {

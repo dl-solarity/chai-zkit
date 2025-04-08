@@ -71,13 +71,50 @@ export type CalldataMatrixPlonk = {
   ];
 };
 
+export type QualifiedSignalNames =
+  | "main.d[0][0]"
+  | "main.d[0][1]"
+  | "main.d[0][2]"
+  | "main.d[1][0]"
+  | "main.d[1][1]"
+  | "main.d[1][2]"
+  | "main.d[2][0]"
+  | "main.d[2][1]"
+  | "main.d[2][2]"
+  | "main.e[0][0]"
+  | "main.e[0][1]"
+  | "main.e[0][2]"
+  | "main.e[1][0]"
+  | "main.e[1][1]"
+  | "main.e[1][2]"
+  | "main.e[2][0]"
+  | "main.e[2][1]"
+  | "main.e[2][2]"
+  | "main.f"
+  | "main.a[0][0]"
+  | "main.a[0][1]"
+  | "main.a[0][2]"
+  | "main.a[1][0]"
+  | "main.a[1][1]"
+  | "main.a[1][2]"
+  | "main.a[2][0]"
+  | "main.a[2][1]"
+  | "main.a[2][2]"
+  | "main.b[0][0]"
+  | "main.b[0][1]"
+  | "main.b[1][0]"
+  | "main.b[1][1]";
+
 export class Matrix extends CircuitZKit<"plonk"> {
   constructor(config: CircuitZKitConfig) {
     super(config, new PlonkImplementer());
   }
 
-  public async generateProof(inputs: PrivateMatrixPlonk): Promise<ProofMatrixPlonk> {
-    const proof = await super.generateProof(inputs as any);
+  public async generateProof(
+    inputs: PrivateMatrixPlonk,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<ProofMatrixPlonk> {
+    const proof = await super.generateProof(inputs as any, witnessOverrides);
 
     return {
       proof: proof.proof,
@@ -85,8 +122,11 @@ export class Matrix extends CircuitZKit<"plonk"> {
     };
   }
 
-  public async calculateWitness(inputs: PrivateMatrixPlonk): Promise<bigint[]> {
-    return super.calculateWitness(inputs as any);
+  public async calculateWitness(
+    inputs: PrivateMatrixPlonk,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<bigint[]> {
+    return super.calculateWitness(inputs as any, witnessOverrides);
   }
 
   public async verifyProof(proof: ProofMatrixPlonk): Promise<boolean> {

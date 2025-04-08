@@ -1,6 +1,6 @@
 {
   "name": "@solarity/chai-zkit",
-  "version": "0.3.2",
+  "version": "0.3.3-rc.0",
   "license": "MIT",
   "author": "Distributed Lab",
   "readme": "README.md",
@@ -45,13 +45,13 @@
   },
   "peerDependencies": {
     "@solarity/hardhat-zkit": ">=0.5.15 <0.6.0",
-    "@solarity/zkit": ">=0.3.6 <0.4.0",
+    "@solarity/zkit": ">=0.3.6 <0.4.0 || 0.3.7-rc.2",
     "chai": "^4.0.0"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.0.5",
-    "@solarity/hardhat-zkit": "^0.5.15",
-    "@solarity/zkit": "^0.3.6",
+    "@solarity/hardhat-zkit": "^0.5.16-rc.0",
+    "@solarity/zkit": "0.3.7-rc.2",
     "@types/chai": "^4.3.16",
     "@types/chai-as-promised": "^7.1.8",
     "@types/mocha": "^10.0.6",
