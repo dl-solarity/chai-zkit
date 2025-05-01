@@ -192,6 +192,12 @@ describe("witness", () => {
       it("should pass for base CircuitZKit object", async () => {
         await expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs(getSignalsArr({ d, e, f }));
       });
+
+      it("should pass if change some witness signals", async () => {
+        await expect(matrix)
+          .with.witnessInputs({ a, b, c }, { "main.f": 123n })
+          .to.have.witnessOutputs({ d, e, f: 123n });
+      });
     });
   });
 
