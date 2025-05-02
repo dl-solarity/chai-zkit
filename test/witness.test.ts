@@ -192,6 +192,12 @@ describe("witness", () => {
       it("should pass for base CircuitZKit object", async () => {
         await expect(baseMatrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs(getSignalsArr({ d, e, f }));
       });
+
+      it("should pass if change some witness signals", async () => {
+        await expect(matrix)
+          .with.witnessInputs({ a, b, c }, { "main.f": 123n })
+          .to.have.witnessOutputs({ d, e, f: 123n });
+      });
     });
   });
 
@@ -240,6 +246,30 @@ describe("witness", () => {
 
       it("should pass if outputs are correct for given inputs and not all outputs passed", async () => {
         await expect(matrix).with.witnessInputs({ a, b, c }).to.have.witnessOutputs({ d });
+      });
+    });
+
+    describe("passConstraints", () => {
+      it("should pass if correct witness is generated", async () => {
+        await expect(matrix)
+          .with.witnessInputs({ a, b, c }, { "main.d[0][0]": 200n, "main.f": 10n })
+          .to.not.passConstraints();
+
+        await expect(matrix)
+          .with.witnessInputs(
+            { a, b, c },
+            {
+              "main.a[0][1]": 2n,
+              "main.b[1][0]": 4n,
+            },
+          )
+          .to.passConstraints();
+      });
+
+      it("should not allow to call passConstraints if withWitness was not called before", async () => {
+        await expect(expect(matrix).to.passConstraints()).to.be.rejectedWith(
+          "`passConstraints` is expected to be called after `witnessInputs`",
+        );
       });
     });
   });

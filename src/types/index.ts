@@ -1,15 +1,26 @@
 export type ExtractInputs<T> = T extends { generateProof(inputs: infer P): Promise<any> } ? P : never;
 export type ExtractOutputs<T> = Omit<ExtractPublicSignals<T>, keyof ExtractInputs<T>>;
 
+export type ExtractWitnessOverridesType<T> = T extends {
+  generateProof(inputs: any, witnessOverrides?: infer P): Promise<any>;
+}
+  ? P
+  : never;
+
 type ExtractPublicSignals<T> = T extends { verifyProof(proof: { publicSignals: infer P }): Promise<boolean> }
   ? P
   : never;
 type ExtractProofType<T> = T extends { verifyProof(proof: infer P): Promise<boolean> } ? P : never;
 
 type Circuit = {
-  generateProof(inputs: any): Promise<any>;
+  generateProof(inputs: any, witnessOverrides?: any): Promise<any>;
   verifyProof(proof: any): Promise<boolean>;
 };
+
+type Inputs<T> = T extends Circuit ? ExtractInputs<T> : never;
+type Outputs<T> = T extends Circuit ? Partial<ExtractOutputs<T>> : never;
+type WitnessOverrides<T> = T extends Circuit ? ExtractWitnessOverridesType<T> : never;
+type Proof<T> = T extends Circuit ? ExtractProofType<T> : never;
 
 declare global {
   module Chai {
@@ -41,11 +52,12 @@ declare global {
       but: AsyncAssertion<T>;
       does: AsyncAssertion<T>;
 
-      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+      witnessInputs(inputs: Inputs<T>, witnessOverrides?: WitnessOverrides<T>): AsyncAssertion<T>;
+      witnessOutputs(outputs: Outputs<T>): AsyncAssertion<T>;
+      passConstraints(): AsyncAssertion<T>;
 
-      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+      generateProof(inputs: Inputs<T>, witnessOverrides?: WitnessOverrides<T>): AsyncAssertion<T>;
+      verifyProof(proof: Proof<T>): AsyncAssertion<T>;
       useSolidityVerifier(verifierContract: any): AsyncAssertion<T>;
     }
 
@@ -67,11 +79,12 @@ declare global {
       but: Assertion<T>;
       does: Assertion<T>;
 
-      witnessInputs(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      witnessOutputs(outputs: T extends Circuit ? Partial<ExtractOutputs<T>> : never): AsyncAssertion<T>;
+      witnessInputs(inputs: Inputs<T>, witnessOverrides?: WitnessOverrides<T>): AsyncAssertion<T>;
+      witnessOutputs(outputs: Outputs<T>): AsyncAssertion<T>;
+      passConstraints(): AsyncAssertion<T>;
 
-      generateProof(inputs: T extends Circuit ? ExtractInputs<T> : never): AsyncAssertion<T>;
-      verifyProof(proof: T extends Circuit ? ExtractProofType<T> : never): AsyncAssertion<T>;
+      generateProof(inputs: Inputs<T>, witnessOverrides?: WitnessOverrides<T>): AsyncAssertion<T>;
+      verifyProof(proof: Proof<T>): AsyncAssertion<T>;
       useSolidityVerifier(verifierContract: any): AsyncAssertion<T>;
     }
   }

@@ -71,13 +71,50 @@ export type CalldataMatrixGroth16 = {
   ];
 };
 
+export type QualifiedSignalNames =
+  | "main.d[0][0]"
+  | "main.d[0][1]"
+  | "main.d[0][2]"
+  | "main.d[1][0]"
+  | "main.d[1][1]"
+  | "main.d[1][2]"
+  | "main.d[2][0]"
+  | "main.d[2][1]"
+  | "main.d[2][2]"
+  | "main.e[0][0]"
+  | "main.e[0][1]"
+  | "main.e[0][2]"
+  | "main.e[1][0]"
+  | "main.e[1][1]"
+  | "main.e[1][2]"
+  | "main.e[2][0]"
+  | "main.e[2][1]"
+  | "main.e[2][2]"
+  | "main.f"
+  | "main.a[0][0]"
+  | "main.a[0][1]"
+  | "main.a[0][2]"
+  | "main.a[1][0]"
+  | "main.a[1][1]"
+  | "main.a[1][2]"
+  | "main.a[2][0]"
+  | "main.a[2][1]"
+  | "main.a[2][2]"
+  | "main.b[0][0]"
+  | "main.b[0][1]"
+  | "main.b[1][0]"
+  | "main.b[1][1]";
+
 export class Matrix extends CircuitZKit<"groth16"> {
   constructor(config: CircuitZKitConfig) {
     super(config, new Groth16Implementer());
   }
 
-  public async generateProof(inputs: PrivateMatrixGroth16): Promise<ProofMatrixGroth16> {
-    const proof = await super.generateProof(inputs as any);
+  public async generateProof(
+    inputs: PrivateMatrixGroth16,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<ProofMatrixGroth16> {
+    const proof = await super.generateProof(inputs as any, witnessOverrides);
 
     return {
       proof: proof.proof,
@@ -85,8 +122,11 @@ export class Matrix extends CircuitZKit<"groth16"> {
     };
   }
 
-  public async calculateWitness(inputs: PrivateMatrixGroth16): Promise<bigint[]> {
-    return super.calculateWitness(inputs as any);
+  public async calculateWitness(
+    inputs: PrivateMatrixGroth16,
+    witnessOverrides?: Partial<Record<QualifiedSignalNames, bigint>>,
+  ): Promise<bigint[]> {
+    return super.calculateWitness(inputs as any, witnessOverrides);
   }
 
   public async verifyProof(proof: ProofMatrixGroth16): Promise<boolean> {

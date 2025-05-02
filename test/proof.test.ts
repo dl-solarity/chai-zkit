@@ -80,6 +80,10 @@ describe("proof", () => {
         await expect(matrix).to.generateProof({ a, b, c });
       });
 
+      it("should correctly generate proof with witness overrides", async () => {
+        await expect(matrix).to.generateProof({ a, b, c }, { "main.f": 10n });
+      });
+
       it("should pass with invalid inputs and negation", async () => {
         await expect(matrix).to.not.generateProof({ a, b } as any);
       });
@@ -110,6 +114,14 @@ describe("proof", () => {
         const proof = await matrix.generateProof({ a, b, c });
 
         proof.publicSignals.f = "30";
+
+        await expect(expect(matrix).to.verifyProof(proof)).to.be.rejectedWith(
+          "Expected proof verification result to be true, but it isn't",
+        );
+      });
+
+      it("should not pass if pass invalid proof (with witness overrides) without negation", async () => {
+        const proof = await matrix.generateProof({ a, b, c }, { "main.f": 10n });
 
         await expect(expect(matrix).to.verifyProof(proof)).to.be.rejectedWith(
           "Expected proof verification result to be true, but it isn't",

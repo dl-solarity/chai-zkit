@@ -4,34 +4,37 @@ import { GENERATE_PROOF_METHOD, USE_SOLIDITY_VERIFIER_METHOD, VERIFY_PROOF_METHO
 import { checkCircuitZKit } from "../utils";
 
 export function proof(chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void {
-  chai.Assertion.addMethod(GENERATE_PROOF_METHOD, function (this: any, inputs: Signals) {
-    const obj = utils.flag(this, "object");
+  chai.Assertion.addMethod(
+    GENERATE_PROOF_METHOD,
+    function (this: any, inputs: Signals, witnessOverrides?: Record<string, bigint>) {
+      const obj = utils.flag(this, "object");
 
-    checkCircuitZKit(obj, GENERATE_PROOF_METHOD);
+      checkCircuitZKit(obj, GENERATE_PROOF_METHOD);
 
-    const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
-      let isGenerated = true;
+      const promise = (this.then === undefined ? Promise.resolve() : this).then(async () => {
+        let isGenerated = true;
 
-      try {
-        const proof = await obj.generateProof(inputs);
+        try {
+          const proof = await obj.generateProof(inputs, witnessOverrides);
 
-        utils.flag(this, "generatedProof", proof);
-      } catch (e) {
-        isGenerated = false;
-      }
+          utils.flag(this, "generatedProof", proof);
+        } catch (e) {
+          isGenerated = false;
+        }
 
-      this.assert(
-        isGenerated,
-        "Expected proof generation to be successful, but it isn't",
-        "Expected proof generation NOT to be successful, but it is",
-      );
-    });
+        this.assert(
+          isGenerated,
+          "Expected proof generation to be successful, but it isn't",
+          "Expected proof generation NOT to be successful, but it is",
+        );
+      });
 
-    this.then = promise.then.bind(promise);
-    this.catch = promise.catch.bind(promise);
+      this.then = promise.then.bind(promise);
+      this.catch = promise.catch.bind(promise);
 
-    return this;
-  });
+      return this;
+    },
+  );
 
   chai.Assertion.addMethod(USE_SOLIDITY_VERIFIER_METHOD, function (this: any, verifierContract: any) {
     const obj = utils.flag(this, "object");
